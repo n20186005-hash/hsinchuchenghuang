@@ -1,0 +1,100 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { site } from '../../data/site.js';
+---
+<Layout title="交通佮停車" description="到新竹城隍廟夜市的交通佮停車攻略：對新竹火車站行路、對高鐵新竹站轉乘、開車停車佮機車停車建議，以路線原則加外部導航呈現。">
+  <section class="page-head">
+    <div class="wrap">
+      <p class="crumbs"><a href="/">頭頁</a> ／ 交通停車</p>
+      <span class="kicker">按怎去・車停佗位</span>
+      <h1>交通佮停車</h1>
+      <p class="lede">本站以「路線原則 ＋ 外部即時導航」呈現，無共公車班次寫死。實際時刻請以官方為準。</p>
+    </div>
+  </section>
+
+  <section class="section-tight">
+    <div class="wrap"><div class="tags">
+      <a class="pill" href="#from-station">火車站</a>
+      <a class="pill" href="#from-hsr">高鐵</a>
+      <a class="pill" href="#by-bus">公車</a>
+      <a class="pill" href="#parking">開車停車</a>
+      <a class="pill" href="#scooter">機車</a>
+    </div></div>
+  </section>
+
+  <section class="section" style="padding-top:6px">
+    <div class="wrap trans-list">
+      <article class="trans-block" id="from-station">
+        <div class="t-ico">🚉</div>
+        <div>
+          <h2>對新竹火車站</h2>
+          <p class="lede">上簡單，直接行路。</p>
+          <p>對台鐵新竹站前站出來，沿<strong>中正路</strong>直直行，到<strong>東門圓環（東門城）</strong>，閣越入<strong>中山路</strong>就到城隍廟。全程約 <strong>10～15 分鐘</strong>，路平好行，途中就有東門城通看。</p>
+        </div>
+      </article>
+
+      <article class="trans-block" id="from-hsr">
+        <div class="t-ico">🚄</div>
+        <div>
+          <h2>對高鐵新竹站</h2>
+          <p class="lede">高鐵站佇竹北六家，愛先入市區。</p>
+          <p>高鐵新竹站無直接到城隍廟。通揀：轉<strong>台鐵六家線</strong>到新竹站，抑坐<strong>公車／接駁</strong>到市區，抑直接<strong>計程車</strong>（較緊，車錢較貴）。轉台鐵是上省的方式。</p>
+        </div>
+      </article>
+
+      <article class="trans-block" id="by-bus">
+        <div class="t-ico">🚌</div>
+        <div>
+          <h2>坐公車</h2>
+          <p class="lede">市區公車有到東門圓環一帶。</p>
+          <p>到「城隍廟／東門圓環」附近的市區公車路線會使調整，出發進前請查<strong>新竹市公車</strong>抑地圖 App 的即時班次，本站無共班次寫死。</p>
+        </div>
+      </article>
+
+      <article class="trans-block" id="parking">
+        <div class="t-ico">🅿️</div>
+        <div>
+          <h2>家己開車・停車</h2>
+          <p class="lede">莫共車直接駛入廟口細巷。</p>
+          <p>城隍廟周邊街仔路狹閣人濟，<strong>先揀外圍停車場才行路</strong>通常較省事。放假時中山路、東門街一帶較會塞，會使揀車站抑東門城附近的收費停車場，行路 5～10 分入夜市。</p>
+          <div class="note" id="holiday-tips" style="margin-top:12px"><strong>放假提醒：</strong>假日中晝到下晡上濟人，車位歹揣，早寡來抑坐大眾運輸較袂等。</div>
+        </div>
+      </article>
+
+      <article class="trans-block" id="scooter">
+        <div class="t-ico">🛵</div>
+        <div>
+          <h2>騎機車</h2>
+          <p class="lede">機車較好䲟，猶是愛停格內。</p>
+          <p>周邊有機車停車格，比汽車好䲟。莫烏白停佇廟埕口抑紅線，較袂食單。</p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="section band-cream">
+    <div class="wrap center">
+      <h2>行到現場，開導航上準</h2>
+      <p class="lede" style="margin-inline:auto">實際路況、停車場狀態會變，請以外部即時導航做準。</p>
+      <a class="btn btn-primary" href={site.mapsUrl} target="_blank" rel="noopener" style="margin-top:14px">開啟外部導航 ↗</a>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .band-cream { background: linear-gradient(180deg, var(--cream-2), var(--cream)); }
+  .trans-list { display: grid; gap: 18px; }
+  .trans-block {
+    display: grid; grid-template-columns: 72px 1fr; gap: 20px; align-items: start;
+    background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-lg);
+    padding: 24px 28px; box-shadow: var(--shadow-sm); border-left: 6px solid var(--gold);
+  }
+  .trans-block h2 { margin: 0 0 2px; }
+  .trans-block .lede { margin-bottom: 8px; }
+  .trans-block p { margin-bottom: 6px; }
+  .t-ico {
+    width: 64px; height: 64px; border-radius: 16px; background: #fbeede;
+    display: grid; place-items: center; font-size: 1.9rem;
+  }
+  @media (max-width: 620px) { .trans-block { grid-template-columns: 1fr; } .t-ico { width: 56px; height: 56px; } }
+</style>

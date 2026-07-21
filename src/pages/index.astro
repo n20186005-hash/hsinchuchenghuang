@@ -1,0 +1,351 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Photo from '../components/Photo.astro';
+import { site, foods, routes } from '../data/site.js';
+
+const homeFoods = foods.slice(0, 6);
+const timeRoutes = routes.filter((r) => ['one-hour', 'two-hours', 'old-town-walk'].includes(r.slug));
+
+const jsonld = {
+  '@context': 'https://schema.org',
+  '@type': 'TouristAttraction',
+  name: '新竹都城隍廟・城隍廟夜市',
+  description: '以新竹都城隍廟為中心的廟口小吃佮夜市美食區。',
+  address: { '@type': 'PostalAddress', streetAddress: '中山路 75 號', addressLocality: '新竹市北區', addressCountry: 'TW' },
+  isAccessibleForFree: true,
+  touristType: '美食旅遊、古蹟參觀',
+};
+---
+<Layout jsonld={jsonld}>
+  <!-- 1. 首屏 -->
+  <section class="hero">
+    <div class="hero-bg" style="background-image:url('/images/market-night.jpg')"></div>
+    <div class="hero-scrim"></div>
+    <div class="wrap hero-inner">
+      <span class="kicker kicker-light">新竹廟口・夜市指南</span>
+      <h1>新竹城隍廟夜市指南</h1>
+      <p class="hero-lede">
+        頭一擺來食啥物、按怎<span class="ruby-w">𨑨迌</span>、車停佗位，一擺共你整理予好勢。<br>
+        <span class="tailo">Sin-tik Sîng-hông-biō — chia̍h-mi̍h、án-ná tshit-thô、thîng-tshia</span>
+      </p>
+      <div class="hero-facts">
+        <span class="pill pill--gold">門票免費</span>
+        <span class="pill">建議停留 1.5～3 點鐘</span>
+        <span class="pill">中山路 75 號</span>
+        <span class="pill">火車站行路會到</span>
+      </div>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="/first-visit/">頭一擺來按怎𨑨迌 →</a>
+        <a class="btn btn-ghost btn-ghost-light" href="/map/">看夜市地圖</a>
+      </div>
+      <p class="hero-sub">
+        抑是先看　<a href="/food/">必食美食</a>　·　<a href="/transport/">交通佮停車</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- 2. 城隍廟夜市是啥物 -->
+  <section class="section">
+    <div class="wrap">
+      <span class="kicker">先搞清楚</span>
+      <h2>城隍廟夜市到底是啥物？</h2>
+      <p class="lede">
+        新竹城隍廟夜市毋是暗時才開始擺的大型夜市，是以<strong>新竹都城隍廟</strong>做中心，
+        由廟埕固定攤位、周邊老店、中央市場佮附近街仔路鬥做伙的<strong>廟口美食區</strong>。
+        有一寡店對日時抑晏起就開始賣，所以毋一定愛等到暗時才來。
+      </p>
+      <div class="grid grid-4" style="margin-top:26px">
+        <div class="card"><div class="card__body">
+          <div class="mini-ico">🍜</div><h3 class="card__title">廟內底就有攤</h3>
+          <p>廟埕本身就是小吃區，毋免揣真久。</p>
+        </div></div>
+        <div class="card"><div class="card__body">
+          <div class="mini-ico">☀️</div><h3 class="card__title">日時嘛食會著</h3>
+          <p>足濟店對中晝就開，白天來嘛袂空手。</p>
+        </div></div>
+        <div class="card"><div class="card__body">
+          <div class="mini-ico">🕗</div><h3 class="card__title">逐間時間無仝</h3>
+          <p>各店營業佮公休攏無仝，出發進前愛先看。</p>
+        </div></div>
+        <div class="card"><div class="card__body">
+          <div class="mini-ico">🏯</div><h3 class="card__title">會當鬥舊城</h3>
+          <p>通佮東門城、北門街做一站舊城𨑨迌。</p>
+        </div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. 第一擺必食 -->
+  <section class="section band-cream">
+    <div class="wrap">
+      <div class="row-head">
+        <div>
+          <span class="kicker">頭一擺必食</span>
+          <h2>第一擺來食啥物？</h2>
+          <p class="lede">先揀食物種類，才免頭一擺就欲揀店揀甲花。</p>
+        </div>
+        <a class="btn btn-ghost hide-mobile" href="/food/">看全部美食 →</a>
+      </div>
+      <div class="grid grid-3" style="margin-top:26px">
+        {homeFoods.map((f) => (
+          <a class="card food-card" href={`/food/#${f.slug}`}>
+            <img class="card__img" src={`/images/${f.img}`} alt={f.name} loading="lazy" />
+            <div class="card__body">
+              <span class="pill pill--red food-tag">{f.tag}</span>
+              <h3 class="card__title">{f.name}</h3>
+              <p class="tailo food-tl">{f.tailo}</p>
+              <p class="food-desc">{f.desc}</p>
+              <div class="food-meta">
+                <span>{f.price}</span><span class="dot">·</span><span>{f.share}</span>
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+      <div class="center" style="margin-top:22px">
+        <a class="btn btn-primary" href="/food/">看全部夜市食食 →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. 按時間揀路線 -->
+  <section class="section">
+    <div class="wrap">
+      <span class="kicker">看你有偌濟時間</span>
+      <h2>按停留時間揀路線</h2>
+      <div class="grid grid-3" style="margin-top:26px">
+        {timeRoutes.map((r) => (
+          <a class="card route-card" href={`/routes/#${r.slug}`}>
+            <div class="card__body">
+              <div class="route-time">{r.duration}</div>
+              <h3 class="card__title">{r.name}</h3>
+              <p>{r.summary}</p>
+              <ol class="mini-steps">
+                {r.steps.slice(0, 3).map((s) => <li>{s}</li>)}
+              </ol>
+              <div class="card__meta">預算 {r.budget}</div>
+            </div>
+          </a>
+        ))}
+      </div>
+      <div class="center" style="margin-top:22px">
+        <a class="btn btn-ghost" href="/routes/">看全部𨑨迌路線 →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. 夜市地圖預覽 -->
+  <section class="section band-red">
+    <div class="wrap map-preview">
+      <div>
+        <span class="kicker kicker-light">全站上愛的功能</span>
+        <h2 class="light">夜市導覽地圖</h2>
+        <p class="light-lede">
+          原創 SVG 靜態地圖，共城隍廟、廟埕小吃區、中山路、東門街、
+          中央市場佮東門城方向攏畫予你看。點標記就會當看店家佮路線。
+        </p>
+        <div class="hero-cta">
+          <a class="btn btn-gold" href="/map/">看完整夜市地圖 →</a>
+          <a class="btn btn-ghost btn-ghost-light" href={site.mapsUrl} target="_blank" rel="noopener">開啟外部導航 ↗</a>
+        </div>
+      </div>
+      <Photo src="temple-arch.jpg" alt="新竹都城隍廟牌樓佮廟埕" ratio="4/3" />
+    </div>
+  </section>
+
+  <!-- 6. 兩人按怎點 -->
+  <section class="section">
+    <div class="wrap two-col">
+      <Photo src="food-stands.jpg" alt="城隍廟周邊的小吃攤位" ratio="5/4" />
+      <div>
+        <span class="kicker">兩人來上實用</span>
+        <h2>兩个人按怎點？</h2>
+        <p class="lede">兩人來，逐項攏分做兩份，通食著較濟款味。</p>
+        <ul class="steps" style="margin-top:14px">
+          <li>一碗米粉摃丸湯先開場，鹹甜芳暖胃。</li>
+          <li>一份新竹肉圓，切做兩爿分。</li>
+          <li>一份蚵仔煎鬥一碗羹湯。</li>
+          <li>甜點揀燒麻糬抑水蒸糕收尾。</li>
+        </ul>
+        <a class="btn btn-ghost" href="/routes/#two-person-food-walk" style="margin-top:6px">看兩人分食路線 →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. 交通佮停車 -->
+  <section class="section band-cream">
+    <div class="wrap">
+      <span class="kicker">按怎去・車停佗位</span>
+      <h2>交通佮停車</h2>
+      <div class="grid grid-3" style="margin-top:24px">
+        <div class="card"><div class="card__body">
+          <div class="mini-ico">🚉</div><h3 class="card__title">對新竹火車站</h3>
+          <p>適合行路，沿中正路、東門圓環、中山路就入去城隍廟周邊。</p>
+          <a href="/transport/#from-station" class="more">看行路方式 →</a>
+        </div></div>
+        <div class="card"><div class="card__body">
+          <div class="mini-ico">🚄</div><h3 class="card__title">對高鐵新竹站</h3>
+          <p>愛先轉台鐵、公車、接駁抑計程車才入市區。</p>
+          <a href="/transport/#from-hsr" class="more">看轉乘方式 →</a>
+        </div></div>
+        <div class="card"><div class="card__body">
+          <div class="mini-ico">🅿️</div><h3 class="card__title">家己開車</h3>
+          <p>莫共車直接駛入廟口的細條巷，先揀外圍停車場才行路較省事。</p>
+          <a href="/transport/#parking" class="more">看停車建議 →</a>
+        </div></div>
+      </div>
+      <div class="note" style="margin-top:20px">
+        <strong>提醒：</strong>公車路線佮接駁服務會使調整，本站以「路線原則＋外部即時導航」呈現，無共班次寫死。
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. 城隍廟參拜重點 -->
+  <section class="section">
+    <div class="wrap two-col">
+      <div>
+        <span class="kicker">文化嘛愛顧著</span>
+        <h2>城隍廟參拜重點</h2>
+        <p class="lede">
+          新竹都城隍廟創建佇 1748 年，是市定古蹟。來食以外，通順紲看廟本身的看點。
+        </p>
+        <ul class="check-list">
+          <li>三川殿佮三疊式厝頂</li>
+          <li>正殿頂的八卦藻井</li>
+          <li>龍柱、石獅佮雕刻</li>
+          <li>樑頂的大鐵算盤</li>
+          <li>「金門保障」古匾</li>
+        </ul>
+        <a class="btn btn-ghost" href="/temple/">看城隍廟導覽 →</a>
+      </div>
+      <Photo src="temple-facade.jpg" alt="新竹都城隍廟正面建築" ratio="4/3" />
+    </div>
+  </section>
+
+  <!-- 9. 附近景點 -->
+  <section class="section band-cream">
+    <div class="wrap">
+      <div class="row-head">
+        <div>
+          <span class="kicker">食了通閣去佗</span>
+          <h2>附近景點</h2>
+        </div>
+        <a class="btn btn-ghost hide-mobile" href="/nearby/">看全部 →</a>
+      </div>
+      <div class="grid grid-3" style="margin-top:24px">
+        <a class="card" href="/nearby/#east-gate">
+          <img class="card__img" src="/images/east-gate.jpg" alt="東門城迎曦門" loading="lazy" />
+          <div class="card__body"><h3 class="card__title">東門城（迎曦門）</h3>
+            <p>新竹舊城保存落來的重要城門地標，行路就到。</p></div>
+        </a>
+        <a class="card" href="/nearby/#moat">
+          <img class="card__img" src="/images/temple-day.jpg" alt="新竹舊城區" loading="lazy" />
+          <div class="card__body"><h3 class="card__title">護城河親水公園</h3>
+            <p>對火車站行來城隍廟途中，通沿河散步歇睏。</p></div>
+        </a>
+        <a class="card" href="/nearby/#beimen">
+          <img class="card__img" src="/images/temple-pailou.jpg" alt="北門街老店" loading="lazy" />
+          <div class="card__body"><h3 class="card__title">北門街老店</h3>
+            <p>城隍廟邊仔的老街，通看竹塹舊城的百年店面。</p></div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10. 常見問題導入 -->
+  <section class="section">
+    <div class="wrap faq-cta">
+      <div>
+        <h2>猶有問題？</h2>
+        <p class="lede">營業時間、白天暗時、幾點人上濟、囡仔通來袂……常見的攏整理佇問答。</p>
+      </div>
+      <a class="btn btn-primary" href="/faq/">看常見問題 →</a>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  /* Hero */
+  .hero { position: relative; color: #fff; overflow: hidden; }
+  .hero-bg {
+    position: absolute; inset: 0; background-size: cover; background-position: center 40%;
+    transform: scale(1.05);
+  }
+  .hero-scrim {
+    position: absolute; inset: 0;
+    background:
+      linear-gradient(180deg, rgba(40,15,12,.55) 0%, rgba(80,20,15,.6) 55%, rgba(122,18,18,.85) 100%),
+      radial-gradient(900px 400px at 20% 10%, rgba(0,0,0,.35), transparent 70%);
+  }
+  .hero-inner { position: relative; padding: 92px 20px 84px; max-width: 760px; }
+  .kicker-light { color: #f6d9a4; }
+  .kicker-light::before { background: var(--gold-soft); }
+  .hero h1 {
+    font-size: clamp(2.2rem, 6.5vw, 3.7rem); margin: 8px 0 14px; line-height: 1.15;
+    text-shadow: 0 2px 20px rgba(0,0,0,.35);
+  }
+  .hero-lede { font-size: 1.16rem; color: #f4e7d8; max-width: 40em; }
+  .hero-lede .tailo { color: #e6c9a3; }
+  .ruby-w { border-bottom: 2px dotted var(--gold-soft); }
+  .hero-facts { display: flex; flex-wrap: wrap; gap: 8px; margin: 22px 0 26px; }
+  .hero-facts .pill { background: rgba(255,255,255,.15); color: #fff; border-color: rgba(255,255,255,.25); backdrop-filter: blur(4px); }
+  .hero-facts .pill--gold { background: var(--gold); border-color: var(--gold); }
+  .hero-cta { display: flex; flex-wrap: wrap; gap: 12px; }
+  .btn-ghost-light { background: rgba(255,255,255,.12); color: #fff; border-color: rgba(255,255,255,.6); }
+  .btn-ghost-light:hover { background: rgba(255,255,255,.22); color: #fff; }
+  .hero-sub { margin-top: 20px; color: #ecd9c3; font-size: .96rem; }
+  .hero-sub a { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
+
+  /* bands */
+  .band-cream { background: linear-gradient(180deg, var(--cream-2), var(--cream)); }
+  .band-red {
+    background: linear-gradient(160deg, var(--red), var(--red-dark));
+    color: #fff;
+  }
+  .band-red .light { color: #fff; }
+  .light-lede { color: #f4d9c9; font-size: 1.08rem; max-width: 34em; }
+
+  .row-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+  .mini-ico { font-size: 1.9rem; margin-bottom: 6px; }
+  .more { font-weight: 700; font-size: .92rem; display: inline-block; margin-top: 8px; }
+
+  /* food cards */
+  .food-card { text-decoration: none; color: inherit; }
+  .food-tag { align-self: flex-start; margin-bottom: 8px; }
+  .food-tl { margin: 0 0 8px; font-size: .84rem; }
+  .food-desc { font-size: .95rem; color: var(--ink-soft); margin-bottom: 12px; }
+  .food-meta { margin-top: auto; font-weight: 700; color: var(--red-dark); font-size: .92rem; }
+  .food-meta .dot { color: var(--stone); margin: 0 8px; }
+
+  /* route cards */
+  .route-card { text-decoration: none; color: inherit; }
+  .route-time {
+    display: inline-block; background: #fbeede; color: var(--red-dark);
+    font-weight: 800; font-size: .84rem; padding: 4px 12px; border-radius: 999px; margin-bottom: 8px;
+  }
+  .mini-steps { margin: 10px 0 14px; padding-left: 18px; font-size: .92rem; color: var(--ink-soft); }
+  .mini-steps li { margin-bottom: 4px; }
+
+  /* map preview + two col */
+  .map-preview, .two-col {
+    display: grid; grid-template-columns: 1.1fr .9fr; gap: 40px; align-items: center;
+  }
+  .two-col :global(figcaption) { color: var(--stone); }
+
+  .check-list { list-style: none; padding: 0; margin: 6px 0 20px; }
+  .check-list li { padding: 8px 0 8px 30px; position: relative; border-bottom: 1px solid var(--line); font-weight: 600; }
+  .check-list li::before {
+    content: "✦"; position: absolute; left: 4px; color: var(--gold); font-size: 1rem;
+  }
+
+  .faq-cta {
+    display: flex; align-items: center; justify-content: space-between; gap: 24px;
+    flex-wrap: wrap; background: var(--paper); border: 1px solid var(--line);
+    border-radius: var(--radius-lg); padding: 34px 38px; box-shadow: var(--shadow-sm);
+  }
+
+  @media (max-width: 820px) {
+    .map-preview, .two-col { grid-template-columns: 1fr; gap: 24px; }
+    .hero-inner { padding: 68px 20px 60px; }
+  }
+</style>

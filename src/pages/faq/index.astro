@@ -1,0 +1,65 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const faqs = [
+  { q: '城隍廟夜市幾點開始？暗時才有？', a: '毋是干焦暗時。真濟廟埕老店對中晝就開始賣，日時來嘛食會著。暗時較有夜市氣氛、人較濟。逐間店的時間無仝，出發進前請看店家公告。' },
+  { q: '愛留偌濟時間？', a: '干焦欲食，1 點鐘就夠；欲順紲拜拜、散步，抓 2～3 點鐘較四序。' },
+  { q: '對火車站按怎去？', a: '行路上簡單，約 10～15 分。沿中正路過東門圓環（東門城），越入中山路就到。詳細看交通停車頁。' },
+  { q: '開車來，車停佗位？', a: '莫共車直接駛入廟口細巷。先揀車站抑東門城附近的收費停車場，行路 5～10 分入夜市較省事。放假時人濟車位歹揣，早寡來較好。' },
+  { q: '頭一擺必食啥物？', a: '先鎖定新竹三寶：米粉、摃丸湯、肉圓，閣配蚵仔煎抑羹湯。收尾買竹塹餅做等路。' },
+  { q: '𤆬囡仔抑序大人適合無？', a: '適合。貢丸湯、肉燥飯這款無傷鹹重，囡仔序大攏食會落。揀有座位的老店較四序。' },
+  { q: '會使刷卡抑用行動支付無？', a: '廟口老店真濟猶原以收現金為主，建議身軀邊紮寡現金零星較穩。' },
+  { q: '落雨天適合來無？', a: '會使。儘量佇廟埕佮中央市場內底食，較袂沃著雨。看落雨天路線的建議。' },
+];
+
+const jsonld = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({
+    '@type': 'Question', name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+};
+---
+<Layout title="常見問題" description="新竹城隍廟夜市常見問題：幾點開始、白天暗時、對火車站按怎去、開車停車、頭一擺必食、囡仔序大適合無、支付方式等。" jsonld={jsonld}>
+  <section class="page-head">
+    <div class="wrap">
+      <p class="crumbs"><a href="/">頭頁</a> ／ 常見問題</p>
+      <span class="kicker">頭一擺攏會問</span>
+      <h1>常見問題</h1>
+      <p class="lede">頭一擺來上捷拄著的問題，攏整理佇遮。</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap faq-list">
+      {faqs.map((f) => (
+        <details class="faq">
+          <summary>{f.q}</summary>
+          <div class="faq-a"><p>{f.a}</p></div>
+        </details>
+      ))}
+      <div class="note" style="margin-top:22px">
+        時間、價數、公休佮交通會使變動，出發進前請以店家佮官方最新公告做準。
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .faq-list { max-width: 760px; margin-inline: auto; }
+  .faq {
+    background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius);
+    margin-bottom: 12px; box-shadow: var(--shadow-sm); overflow: hidden;
+  }
+  .faq summary {
+    cursor: pointer; padding: 18px 22px; font-weight: 800; font-size: 1.05rem; color: var(--ink);
+    list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 14px;
+  }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after { content: "＋"; color: var(--red); font-size: 1.3rem; flex: none; }
+  .faq[open] summary::after { content: "－"; }
+  .faq[open] summary { color: var(--red-dark); }
+  .faq-a { padding: 0 22px 20px; }
+  .faq-a p { margin: 0; color: var(--ink-soft); }
+</style>

@@ -1,0 +1,124 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { foods } from '../../data/site.js';
+
+const scenes = [
+  { label: '頭一擺必食', href: '/routes/#two-hours' },
+  { label: '一个人按怎食', href: '/routes/#one-hour' },
+  { label: '兩个人分食', href: '/routes/#two-person-food-walk' },
+  { label: '𤆬囡仔', href: '/routes/#family' },
+  { label: '適合外帶', href: '#takeaway' },
+  { label: '甜點佮等路', href: '#souvenirs' },
+];
+
+const jsonld = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: '新竹城隍廟夜市代表美食',
+  itemListElement: foods.map((f, i) => ({
+    '@type': 'ListItem', position: i + 1, name: f.name,
+  })),
+};
+---
+<Layout title="夜市食食總覽" description="新竹城隍廟夜市代表美食：米粉摃丸湯、新竹肉圓、肉燥飯、蚵仔煎、羹湯佮竹塹餅等路，附口味說明、價數區間佮分食建議。" ogImage="/images/food-gongwan.jpg" jsonld={jsonld}>
+  <section class="page-head">
+    <div class="wrap">
+      <p class="crumbs"><a href="/">頭頁</a> ／ 夜市食食</p>
+      <span class="kicker">廟口必食</span>
+      <h1>夜市食食總覽</h1>
+      <p class="lede">先揀食物種類，才免頭一擺就欲揀甲花。逐項攏有口味說明、價數區間佮分食建議。</p>
+    </div>
+  </section>
+
+  <section class="section-tight">
+    <div class="wrap">
+      <div class="tags scene-tags">
+        {scenes.map((s) => <a class="pill" href={s.href}>{s.label}</a>)}
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:10px">
+    <div class="wrap">
+      <div class="food-grid">
+        {foods.map((f) => (
+          <article class="food-item" id={f.slug}>
+            <img src={`/images/${f.img}`} alt={f.name} loading="lazy" />
+            <div class="food-item__body">
+              <span class="pill pill--red">{f.tag}</span>
+              <h2>{f.name}</h2>
+              <p class="tailo">{f.tailo}</p>
+              <p class="desc">{f.desc}</p>
+              <dl class="spec">
+                <dt>價數</dt><dd>{f.price}</dd>
+                <dt>分食</dt><dd>{f.share}</dd>
+              </dl>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section band-cream" id="order-tips">
+    <div class="wrap">
+      <span class="kicker">頭一擺點餐</span>
+      <h2>點餐愛注意的</h2>
+      <div class="grid grid-3" style="margin-top:22px">
+        <div class="card"><div class="card__body">
+          <h3 class="card__title">先看時間</h3>
+          <p>逐間營業佮公休無仝。<strong>一般營業時間依店家公開資訊整理</strong>，節日、臨時歇睏抑賣了會使調整，出發進前請看店家最新公告。</p>
+        </div></div>
+        <div class="card"><div class="card__body">
+          <h3 class="card__title">現金較穩</h3>
+          <p>廟口老店真濟猶原收現金為主，身軀邊紮寡零星較袂卡。</p>
+        </div></div>
+        <div class="card"><div class="card__body">
+          <h3 class="card__title" id="takeaway">會使外帶</h3>
+          <p>湯類、肉圓、竹塹餅攏通外帶。人濟坐無位的時，外帶去廟埕邊仔食嘛好。</p>
+        </div></div>
+      </div>
+      <div class="note" style="margin-top:20px">
+        本站無提供「營業中／已打烊／等候幾分鐘／今仔日賣了」這款即時狀態。
+        時間、價數會使變動，請以店家現場佮官方公告做準。
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="souvenirs">
+    <div class="wrap">
+      <div class="row-head">
+        <div>
+          <span class="kicker">買轉去分</span>
+          <h2>甜點佮等路（伴手禮）</h2>
+          <p class="lede">燒麻糬、水蒸糕食現的；竹塹餅、肉餅通買轉去做等路。</p>
+        </div>
+        <a class="btn btn-primary" href="/map/">佇地圖揣店家 →</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .band-cream { background: linear-gradient(180deg, var(--cream-2), var(--cream)); }
+  .scene-tags .pill { font-size: .9rem; }
+  .row-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+
+  .food-grid { display: grid; gap: 22px; }
+  .food-item {
+    display: grid; grid-template-columns: 300px 1fr; gap: 26px;
+    background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-lg);
+    overflow: hidden; box-shadow: var(--shadow-sm);
+  }
+  .food-item img { width: 100%; height: 100%; min-height: 220px; object-fit: cover; }
+  .food-item__body { padding: 24px 28px 24px 0; }
+  .food-item h2 { margin: 10px 0 2px; }
+  .food-item .tailo { margin: 0 0 10px; }
+  .food-item .desc { color: var(--ink-soft); }
+  .food-item .spec { max-width: 320px; margin-top: 8px; }
+  @media (max-width: 680px) {
+    .food-item { grid-template-columns: 1fr; }
+    .food-item img { min-height: 200px; aspect-ratio: 16/10; }
+    .food-item__body { padding: 4px 22px 24px; }
+  }
+</style>

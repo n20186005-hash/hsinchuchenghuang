@@ -1,0 +1,105 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Photo from '../../components/Photo.astro';
+import { templeHighlights } from '../../data/site.js';
+
+const jsonld = {
+  '@context': 'https://schema.org',
+  '@type': 'TouristAttraction',
+  name: '新竹都城隍廟',
+  description: '創建於 1748 年的新竹市定古蹟，主祀城隍爺，是新竹舊城信仰佮廟口小吃的中心。',
+  address: { '@type': 'PostalAddress', streetAddress: '中山路 75 號', addressLocality: '新竹市北區', addressCountry: 'TW' },
+  isAccessibleForFree: true,
+};
+---
+<Layout title="城隍廟參觀指南" description="新竹城隍廟參觀指南：城隍爺是啥人、參拜順序、現場五大看點（三川殿、八卦藻井、龍柱石獅、大鐵算盤、古匾）佮拍照禮儀。" ogImage="/images/temple-facade.jpg" jsonld={jsonld}>
+  <section class="page-head">
+    <div class="wrap">
+      <p class="crumbs"><a href="/">頭頁</a> ／ 城隍廟導覽</p>
+      <span class="kicker">文化嘛愛顧著</span>
+      <h1>新竹城隍廟參觀指南</h1>
+      <p class="lede">頭一擺來看啥物、按怎拜。城隍廟創建佇 1748 年，是新竹市定古蹟，嘛是廟口夜市的中心。</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap two-col">
+      <div>
+        <span class="kicker">先捌背景</span>
+        <h2>城隍爺是啥人？</h2>
+        <p>城隍爺是掌管一个地方陰陽、賞善罰惡的神明。新竹城隍位階特別懸，號做「<strong>都城隍</strong>」，管的範圍闊，是全台知名的城隍廟之一。</p>
+        <p>逐年<strong>中元</strong>的城隍祭典（迎城隍）是新竹的大代誌，遶境熱鬧，是在地重要的民俗活動。當年度詳細日程，請看廟方官方公告。</p>
+        <h3 style="margin-top:18px">參拜順序（一般原則）</h3>
+        <ol class="steps">
+          <li>對廟埕正門入，先向主神城隍爺參拜。</li>
+          <li>順序拜配祀的神明。</li>
+          <li>心內誠意上要緊，毋免趕。</li>
+        </ol>
+      </div>
+      <Photo src="temple-facade.jpg" alt="新竹都城隍廟正殿建築" ratio="4/5" />
+    </div>
+  </section>
+
+  <section class="section band-cream">
+    <div class="wrap">
+      <span class="kicker">現場莫走精</span>
+      <h2>五大看點</h2>
+      <p class="lede">除了食以外，城隍廟本身的建築嘛真值得看。</p>
+      <div class="grid grid-3" style="margin-top:24px">
+        {templeHighlights.map((h, i) => (
+          <div class="card"><div class="card__body">
+            <span class="hl-no">{String(i + 1).padStart(2, '0')}</span>
+            <h3 class="card__title">{h.name}</h3>
+            <p>{h.desc}</p>
+          </div></div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap two-col">
+      <Photo src="temple-arch.jpg" alt="新竹都城隍廟牌樓佮屋簷細節" ratio="4/3" />
+      <div>
+        <span class="kicker">禮數</span>
+        <h2>拍照佮參觀禮儀</h2>
+        <ul class="check-list">
+          <li>參拜時莫大聲喝話，尊重teh拜拜的人。</li>
+          <li>拍照莫擋著神桌佮參拜動線。</li>
+          <li>有的區域抑法會期間禁止攝影，請看現場指示。</li>
+          <li>𤆬囡仔顧予好，殿內物件莫烏白摸。</li>
+          <li>金爐、香火邊仔細膩，較燒。</li>
+        </ul>
+        <div class="note">
+          本站只整理固定背景佮一般參觀原則。法會、慶典佮中元祭的當年度詳細日程，請以
+          <strong>新竹都城隍廟官方公告</strong>做準。
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section band-red">
+    <div class="wrap center">
+      <h2 class="light">拜煞，落來食廟口</h2>
+      <p class="light-lede" style="margin-inline:auto">出廟埕就是小吃區，順紲共新竹的味食一輪。</p>
+      <div class="center-cta">
+        <a class="btn btn-gold" href="/food/">看必食美食 →</a>
+        <a class="btn btn-ghost btn-ghost-light" href="/map/">看夜市地圖 →</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .band-cream { background: linear-gradient(180deg, var(--cream-2), var(--cream)); }
+  .band-red { background: linear-gradient(160deg, var(--red), var(--red-dark)); color: #fff; }
+  .band-red .light { color: #fff; }
+  .light-lede { color: #f4d9c9; }
+  .two-col { display: grid; grid-template-columns: 1.1fr .9fr; gap: 40px; align-items: center; }
+  .hl-no { font-size: 1.4rem; font-weight: 800; color: var(--gold); display: block; }
+  .check-list { list-style: none; padding: 0; margin: 6px 0 18px; }
+  .check-list li { padding: 8px 0 8px 28px; position: relative; border-bottom: 1px solid var(--line); }
+  .check-list li::before { content: "✦"; position: absolute; left: 2px; color: var(--gold); }
+  .center-cta { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 16px; }
+  @media (max-width: 860px) { .two-col { grid-template-columns: 1fr; gap: 24px; } }
+</style>

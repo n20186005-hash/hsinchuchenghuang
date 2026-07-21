@@ -1,0 +1,71 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { site, credits } from '../../data/site.js';
+const creditList = Object.entries(credits);
+---
+<Layout title="關於本站" description="關於新竹城隍廟夜市指南：一个幫台灣旅客緊掌握城隍廟夜市按怎食、按怎𨑨迌、按怎去的獨立靜態旅遊指南，附相片授權出處。">
+  <section class="page-head">
+    <div class="wrap">
+      <p class="crumbs"><a href="/">頭頁</a> ／ 關於本站</p>
+      <span class="kicker">Kuan-î pún-tsām</span>
+      <h1>關於本站</h1>
+      <p class="lede">一个幫台灣旅客緊掌握新竹城隍廟夜市按怎食、按怎𨑨迌、按怎去、車停佗位的靜態旅遊指南。</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap narrow">
+      <h2>本站teh做啥</h2>
+      <p>《{site.name}》共新竹城隍廟夜市的美食、路線、地圖、交通佮參拜資訊整理做一站。內容以<strong>台語（漢字為主，重要詞配台羅拼音）</strong>書寫，予講台語的朋友讀著較親切。</p>
+
+      <h2 style="margin-top:26px">內容重心</h2>
+      <dl class="spec">
+        <dt>夜市美食佮逛法</dt><dd>60%</dd>
+        <dt>交通停車佮實用資訊</dt><dd>25%</dd>
+        <dt>寺廟參拜佮文化</dt><dd>15%</dd>
+      </dl>
+
+      <h2 style="margin-top:26px">本站毋做的代誌</h2>
+      <ul class="check-list">
+        <li>無提供即時營業狀態、即時人潮抑停車位</li>
+        <li>無自製星等、無虛構評論數</li>
+        <li>毋是店家評論社群，嘛毋是官方仿站</li>
+        <li>無代收香油錢抑法會費用</li>
+      </ul>
+
+      <h2 style="margin-top:26px">相片來源佮授權</h2>
+      <p>本站相片攏來自 <strong>Wikimedia Commons</strong>，依各自的 Creative Commons 授權使用，並標示作者：</p>
+      <div class="cred-table">
+        {creditList.map(([file, c]) => (
+          <div class="cred-row">
+            <code>{file}</code>
+            <span>{c.by}</span>
+            <span class="lic">{c.lic}</span>
+            <a href={c.src} target="_blank" rel="noopener">來源 ↗</a>
+          </div>
+        ))}
+      </div>
+
+      <h2 style="margin-top:26px">更新方式</h2>
+      <p>本站每半年做一擺全面檢查（店家是否猶佇、營業時段、公休、地址、交通、停車、價數區間、外部連結）。若拄著店家搬徙、歇業抑道路施工等大代誌，會單獨更新。</p>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .narrow { max-width: 780px; }
+  .check-list { list-style: none; padding: 0; margin: 6px 0; }
+  .check-list li { padding: 8px 0 8px 28px; position: relative; border-bottom: 1px solid var(--line); }
+  .check-list li::before { content: "✦"; position: absolute; left: 2px; color: var(--gold); }
+  .cred-table { border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; margin-top: 10px; }
+  .cred-row {
+    display: grid; grid-template-columns: 1.6fr 1.2fr auto auto; gap: 12px; align-items: center;
+    padding: 10px 16px; border-bottom: 1px solid var(--line); font-size: .88rem;
+  }
+  .cred-row:last-child { border-bottom: 0; }
+  .cred-row:nth-child(odd) { background: var(--cream-2); }
+  .cred-row code { font-size: .82rem; color: var(--ink-soft); word-break: break-all; }
+  .cred-row .lic { color: var(--stone); font-weight: 700; }
+  .review-line { color: var(--stone); font-size: .9rem; }
+  @media (max-width: 600px) { .cred-row { grid-template-columns: 1fr auto; row-gap: 4px; } .cred-row .lic { grid-column: 1; } }
+</style>

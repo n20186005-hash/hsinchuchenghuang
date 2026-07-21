@@ -1,0 +1,85 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { routes } from '../../data/site.js';
+
+const jsonld = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: '新竹城隍廟夜市𨑨迌路線',
+  itemListElement: routes.map((r, i) => ({ '@type': 'ListItem', position: i + 1, name: r.name })),
+};
+---
+<Layout title="𨑨迌路線" description="新竹城隍廟夜市𨑨迌路線：一點鐘緊食、兩點鐘經典、兩人分食、落雨天、親子佮舊城半日遊，逐條攏有步驟、時間佮預算。" jsonld={jsonld}>
+  <section class="page-head">
+    <div class="wrap">
+      <p class="crumbs"><a href="/">頭頁</a> ／ 𨑨迌路線</p>
+      <span class="kicker">看你有偌濟時間</span>
+      <h1>推薦𨑨迌路線</h1>
+      <p class="lede">頭一擺來免家己傷惱，照時間佮人數揀一條，逐條攏有步驟、時間佮預算。</p>
+    </div>
+  </section>
+
+  <section class="section-tight">
+    <div class="wrap">
+      <div class="tags">
+        {routes.map((r) => <a class="pill" href={`#${r.slug}`}>{r.name}</a>)}
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:6px">
+    <div class="wrap route-list">
+      {routes.map((r) => (
+        <article class="route-block" id={r.slug}>
+          <div class="route-block__head">
+            <div>
+              <h2>{r.name}</h2>
+              <p class="tailo">{r.tailo}</p>
+              <p class="route-summary">{r.summary}</p>
+            </div>
+            <div class="route-facts">
+              <span class="pill pill--red">{r.duration}</span>
+              <span class="pill">{r.budget}</span>
+              <span class="pill">行 {r.walk}</span>
+            </div>
+          </div>
+          <ol class="steps">
+            {r.steps.map((s) => <li>{s}</li>)}
+          </ol>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="section band-cream">
+    <div class="wrap center cta-box">
+      <h2>照路線行，配夜市地圖上好用</h2>
+      <p class="lede" style="margin-inline:auto">地圖有標各區位置佮攤位，邊行邊看袂行冤枉路。</p>
+      <div class="hero-cta center-cta">
+        <a class="btn btn-primary" href="/map/">看夜市地圖 →</a>
+        <a class="btn btn-ghost" href="/food/">看必食美食 →</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .band-cream { background: linear-gradient(180deg, var(--cream-2), var(--cream)); }
+  .route-list { display: grid; gap: 22px; }
+  .route-block {
+    background: var(--paper); border: 1px solid var(--line);
+    border-radius: var(--radius-lg); padding: 26px 30px; box-shadow: var(--shadow-sm);
+    border-left: 6px solid var(--red);
+  }
+  .route-block__head {
+    display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap;
+    align-items: flex-start; margin-bottom: 8px;
+  }
+  .route-block h2 { margin: 0 0 2px; }
+  .route-block .tailo { margin: 0 0 8px; }
+  .route-summary { color: var(--ink-soft); max-width: 40em; margin: 0; }
+  .route-facts { display: flex; flex-wrap: wrap; gap: 8px; }
+  .hero-cta { display: flex; gap: 12px; flex-wrap: wrap; }
+  .center-cta { justify-content: center; margin-top: 18px; }
+  .cta-box h2 { margin-bottom: 8px; }
+</style>

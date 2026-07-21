@@ -1,0 +1,72 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Photo from '../../components/Photo.astro';
+---
+<Layout title="頭一擺來按怎𨑨迌" description="頭一擺來新竹城隍廟夜市的完整攻略：夜市佇佗位、對火車站按怎行、白天抑暗時來、愛留偌濟時間、頭一擺必食啥物。">
+  <section class="page-head">
+    <div class="wrap">
+      <p class="crumbs"><a href="/">頭頁</a> ／ 頭一擺來</p>
+      <span class="kicker">Tē-it pái lâi</span>
+      <h1>頭一擺來按怎𨑨迌</h1>
+      <p class="lede">頭一擺來新竹城隍廟夜市，六个上要緊的問題，一擺共你講予清楚。</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="q-grid">
+        <div class="q-card"><span class="q-no">01</span><h3>夜市佇佗位？</h3><p>就是<strong>新竹都城隍廟</strong>（中山路 75 號）佮伊周邊。以廟埕做中心，向中山路、東門街、西安街四界散開，並毋是一條路的夜市。</p></div>
+        <div class="q-card"><span class="q-no">02</span><h3>對火車站按怎行？</h3><p>對新竹火車站行路約 10～15 分。沿中正路、過東門圓環（東門城），入中山路就到。<a href="/transport/">看交通詳細 →</a></p></div>
+        <div class="q-card"><span class="q-no">03</span><h3>頭一擺食啥物？</h3><p>先鎖定新竹三寶：<strong>米粉、摃丸湯、肉圓</strong>，閣配一份蚵仔煎抑羹湯就真讚。<a href="/food/">看必食美食 →</a></p></div>
+        <div class="q-card"><span class="q-no">04</span><h3>愛留偌濟時間？</h3><p>干焦欲食，<strong>1 點鐘</strong>就夠；欲順紲拜拜、散步，抓 <strong>2～3 點鐘</strong>較四序。<a href="/routes/">看路線 →</a></p></div>
+        <div class="q-card"><span class="q-no">05</span><h3>白天抑暗時來？</h3><p>攏會使。真濟廟埕老店對中晝就開，<strong>日時來嘛食會著</strong>；暗時較有夜市氣氛，人嘛較濟。</p></div>
+        <div class="q-card"><span class="q-no">06</span><h3>食了通閣去佗？</h3><p>行路就到東門城、護城河、北門街老店，鬥做一站<strong>舊城半日遊</strong>。<a href="/nearby/">看附近景點 →</a></p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section band-cream">
+    <div class="wrap two-col">
+      <Photo src="temple-covid.jpg" alt="新竹都城隍廟白天" ratio="4/3" />
+      <div>
+        <span class="kicker">上簡單的行法</span>
+        <h2>三步驟，頭一擺免煩惱</h2>
+        <ol class="steps" style="margin-top:12px">
+          <li><strong>先揀時間</strong>：欲食飽走，抑欲順紲𨑨迌，決定留 1～3 點鐘。</li>
+          <li><strong>照路線行</strong>：揀一條路線，配夜市地圖邊行邊食。</li>
+          <li><strong>食了散步</strong>：行去東門城、北門街，收尾買竹塹餅做等路。</li>
+        </ol>
+        <div class="hero-cta" style="display:flex;gap:12px;flex-wrap:wrap">
+          <a class="btn btn-primary" href="/routes/">看𨑨迌路線 →</a>
+          <a class="btn btn-ghost" href="/map/">看夜市地圖 →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="note">
+        <strong>細節提醒：</strong>逐間店的營業時間佮公休無仝，本站無提供即時營業狀態。
+        出發進前，請以店家佮官方最新公告做準。
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .band-cream { background: linear-gradient(180deg, var(--cream-2), var(--cream)); }
+  .q-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .q-card {
+    background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 24px 22px; box-shadow: var(--shadow-sm); position: relative;
+  }
+  .q-no {
+    font-size: 1.6rem; font-weight: 800; color: var(--gold); display: block; margin-bottom: 4px;
+    font-variant-numeric: tabular-nums;
+  }
+  .q-card h3 { color: var(--red-dark); }
+  .q-card p { margin: 0; color: var(--ink-soft); }
+  .two-col { display: grid; grid-template-columns: .9fr 1.1fr; gap: 40px; align-items: center; }
+  @media (max-width: 860px) { .q-grid { grid-template-columns: 1fr; } .two-col { grid-template-columns: 1fr; gap: 24px; } }
+</style>

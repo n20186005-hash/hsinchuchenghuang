@@ -1,0 +1,87 @@
+---
+import { nav, site } from '../data/site.js';
+const path = Astro.url.pathname;
+---
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="/">
+      <span class="brand-mark" aria-hidden="true">城</span>
+      <span class="brand-txt">
+        <strong>新竹城隍廟夜市</strong>
+        <small>HSINCHU CHENG HUANG</small>
+      </span>
+    </a>
+    <nav class="main-nav" aria-label="主選單">
+      {nav.map((item) => (
+        <a href={item.href} class:list={["nav-link", { active: path.startsWith(item.href) }]}>{item.label}</a>
+      ))}
+    </nav>
+    <button class="nav-toggle" aria-label="展開選單" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <nav class="drawer" aria-label="行動選單">
+    {nav.map((item) => <a href={item.href} class="drawer-link">{item.label}</a>)}
+    <a href="/transport/" class="drawer-link">交通停車</a>
+    <a href="/faq/" class="drawer-link">常見問題</a>
+  </nav>
+</header>
+
+<style>
+  .site-header {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(255,253,248,.92);
+    backdrop-filter: saturate(1.2) blur(8px);
+    border-bottom: 1px solid var(--line);
+  }
+  .header-inner { display: flex; align-items: center; gap: 18px; height: 66px; }
+  .brand { display: flex; align-items: center; gap: 11px; color: var(--ink); }
+  .brand-mark {
+    width: 42px; height: 42px; border-radius: 10px;
+    background: linear-gradient(160deg, var(--red), var(--red-dark));
+    color: #fff; display: grid; place-items: center;
+    font-weight: 800; font-size: 1.4rem; box-shadow: var(--shadow-sm);
+    border: 2px solid var(--gold-soft);
+  }
+  .brand-txt { display: flex; flex-direction: column; line-height: 1.1; }
+  .brand-txt strong { font-size: 1.06rem; letter-spacing: .04em; }
+  .brand-txt small { font-size: .62rem; letter-spacing: .22em; color: var(--stone); }
+  .main-nav { margin-left: auto; display: flex; gap: 2px; flex-wrap: wrap; }
+  .nav-link {
+    padding: 8px 12px; border-radius: 8px; font-weight: 700; font-size: .95rem;
+    color: var(--ink-soft);
+  }
+  .nav-link:hover { background: #fbeede; color: var(--red-dark); }
+  .nav-link.active { color: var(--red); background: #fbeede; }
+  .nav-toggle { display: none; }
+  .drawer { display: none; }
+
+  @media (max-width: 940px) {
+    .main-nav { display: none; }
+    .nav-toggle {
+      display: flex; flex-direction: column; gap: 5px; margin-left: auto;
+      background: none; border: 0; padding: 8px; cursor: pointer;
+    }
+    .nav-toggle span { width: 24px; height: 2px; background: var(--ink); border-radius: 2px; transition: .2s; }
+    .drawer {
+      display: grid; grid-template-columns: 1fr 1fr;
+      max-height: 0; overflow: hidden; transition: max-height .25s ease;
+      background: var(--paper); border-top: 1px solid var(--line);
+    }
+    .drawer.open { max-height: 420px; }
+    .drawer-link {
+      padding: 14px 20px; font-weight: 700; color: var(--ink-soft);
+      border-bottom: 1px solid var(--line);
+    }
+    .drawer-link:nth-child(odd) { border-right: 1px solid var(--line); }
+  }
+</style>
+
+<script>
+  const btn = document.querySelector('.nav-toggle');
+  const drawer = document.querySelector('.drawer');
+  btn?.addEventListener('click', () => {
+    const open = drawer?.classList.toggle('open');
+    btn.setAttribute('aria-expanded', String(!!open));
+  });
+</script>

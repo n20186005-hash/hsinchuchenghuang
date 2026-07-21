@@ -1,0 +1,199 @@
+/* =========================================================
+   新竹城隍廟夜市指南 — 全站樣式
+   風格：現代旅遊工具介面 + 廟口／竹塹舊城元素
+   配色：深朱紅、暖米白、深墨、石灰、暗金
+   字體：系統預設（無外部字體）
+   ========================================================= */
+
+:root {
+  /* 主色系 */
+  --red: #9e1b1b;          /* 深朱紅 */
+  --red-dark: #7a1212;
+  --red-soft: #c0392b;
+  --gold: #b8892b;         /* 暗金 */
+  --gold-soft: #d4a94e;
+  --ink: #24201d;          /* 深墨黑 */
+  --ink-soft: #4a433d;
+  --stone: #8a827a;        /* 石灰 */
+  --line: #e6ddd0;
+  --cream: #f7f1e6;        /* 暖米白 */
+  --cream-2: #fbf7ee;
+  --paper: #fffdf8;
+  --white: #ffffff;
+
+  --shadow-sm: 0 1px 3px rgba(60, 40, 20, .08);
+  --shadow: 0 6px 24px rgba(80, 40, 20, .12);
+  --shadow-lg: 0 18px 48px rgba(80, 40, 20, .18);
+  --radius: 14px;
+  --radius-lg: 22px;
+  --wrap: 1120px;
+
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+  color-scheme: light;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(1200px 500px at 80% -10%, #fbeede 0%, transparent 60%),
+    var(--cream);
+  color: var(--ink);
+  line-height: 1.75;
+  font-size: 17px;
+  letter-spacing: .01em;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+img { max-width: 100%; display: block; }
+a { color: var(--red); text-decoration: none; }
+a:hover { color: var(--red-dark); }
+
+h1, h2, h3, h4 { line-height: 1.3; font-weight: 800; letter-spacing: .02em; }
+h2 { font-size: clamp(1.5rem, 3vw, 2.1rem); margin: 0 0 .4em; }
+h3 { font-size: 1.2rem; margin: 0 0 .3em; }
+p { margin: 0 0 1em; }
+
+.wrap { max-width: var(--wrap); margin-inline: auto; padding-inline: 20px; }
+.section { padding: 62px 0; }
+.section-tight { padding: 40px 0; }
+.center { text-align: center; }
+
+/* 台羅拼音註記 */
+.tailo { font-style: italic; color: var(--stone); font-weight: 500; }
+ruby rt { font-size: .62em; color: var(--red-soft); font-style: italic; letter-spacing: 0; }
+
+/* 眉標 / kicker */
+.kicker {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: .82rem; font-weight: 800; letter-spacing: .18em;
+  color: var(--red); text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.kicker::before {
+  content: ""; width: 26px; height: 2px; background: var(--gold); display: inline-block;
+}
+
+.lede { font-size: 1.12rem; color: var(--ink-soft); max-width: 42em; }
+
+/* 按鈕 */
+.btn {
+  display: inline-flex; align-items: center; gap: .5em;
+  padding: 13px 24px; border-radius: 999px;
+  font-weight: 800; font-size: 1rem; letter-spacing: .03em;
+  border: 2px solid transparent; cursor: pointer;
+  transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+}
+.btn:hover { transform: translateY(-2px); }
+.btn-primary { background: var(--red); color: #fff; box-shadow: var(--shadow); }
+.btn-primary:hover { background: var(--red-dark); color: #fff; }
+.btn-ghost { background: rgba(255,255,255,.7); color: var(--red); border-color: var(--red); }
+.btn-ghost:hover { background: #fff; color: var(--red-dark); }
+.btn-gold { background: var(--gold); color: #fff; }
+.btn-gold:hover { background: #a2781f; color: #fff; }
+
+/* 資訊藥丸 */
+.pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 13px; border-radius: 999px;
+  background: #fff; border: 1px solid var(--line);
+  font-size: .86rem; font-weight: 700; color: var(--ink-soft);
+  box-shadow: var(--shadow-sm);
+}
+.pill--red { background: var(--red); color: #fff; border-color: var(--red); }
+.pill--gold { background: #fbf1da; color: #8a6314; border-color: #ecd9ab; }
+
+/* 卡片 */
+.grid { display: grid; gap: 20px; }
+.grid-2 { grid-template-columns: repeat(2, 1fr); }
+.grid-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-4 { grid-template-columns: repeat(4, 1fr); }
+
+.card {
+  background: var(--paper); border: 1px solid var(--line);
+  border-radius: var(--radius); overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+  display: flex; flex-direction: column;
+}
+.card:hover { transform: translateY(-4px); box-shadow: var(--shadow); border-color: #e0cfae; }
+.card__body { padding: 18px 20px 20px; flex: 1; display: flex; flex-direction: column; }
+.card__img { aspect-ratio: 4/3; object-fit: cover; width: 100%; background: var(--cream-2); }
+.card__title { font-size: 1.14rem; font-weight: 800; margin: 0 0 4px; color: var(--ink); }
+.card__meta { font-size: .84rem; color: var(--stone); margin-top: auto; }
+
+/* 通用標籤列 */
+.tags { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+
+/* 提醒框 */
+.note {
+  border-left: 4px solid var(--gold); background: #fbf4e5;
+  padding: 14px 18px; border-radius: 0 10px 10px 0;
+  font-size: .96rem; color: var(--ink-soft);
+}
+.note strong { color: var(--red-dark); }
+
+/* 頁面標頭 */
+.page-head {
+  background:
+    linear-gradient(180deg, rgba(158,27,27,.92), rgba(122,18,18,.94)),
+    var(--red);
+  color: #fff; padding: 54px 0 46px; position: relative;
+}
+.page-head::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 8px;
+  background: repeating-linear-gradient(90deg, var(--gold) 0 26px, var(--gold-soft) 26px 52px);
+}
+.page-head h1 { font-size: clamp(1.8rem, 4.5vw, 2.7rem); margin: 6px 0 10px; }
+.page-head .lede { color: #f5e6d8; }
+.page-head .kicker { color: #f4d9a0; }
+.page-head .kicker::before { background: var(--gold-soft); }
+
+/* 麵包屑 */
+.crumbs { font-size: .84rem; color: rgba(255,255,255,.8); margin-bottom: 4px; }
+.crumbs a { color: rgba(255,255,255,.9); }
+.crumbs a:hover { color: #fff; }
+
+/* 步驟列（路線） */
+.steps { list-style: none; margin: 0; padding: 0; counter-reset: step; }
+.steps li {
+  position: relative; padding: 14px 0 14px 54px; border-bottom: 1px dashed var(--line);
+}
+.steps li::before {
+  counter-increment: step; content: counter(step);
+  position: absolute; left: 0; top: 12px;
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--red); color: #fff; font-weight: 800;
+  display: grid; place-items: center;
+}
+.steps li:last-child { border-bottom: 0; }
+
+/* 定義表 */
+.spec { display: grid; grid-template-columns: auto 1fr; gap: 2px 18px; margin: 0; }
+.spec dt { font-weight: 800; color: var(--red-dark); padding: 7px 0; }
+.spec dd { margin: 0; padding: 7px 0; border-bottom: 1px solid var(--line); }
+
+/* 圖片說明 / 出處 */
+figure { margin: 0; }
+figcaption { font-size: .78rem; color: var(--stone); padding: 6px 2px; }
+
+@media (max-width: 860px) {
+  .grid-4 { grid-template-columns: repeat(2, 1fr); }
+  .grid-3 { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 560px) {
+  body { font-size: 16px; }
+  .section { padding: 44px 0; }
+  .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+  .hide-mobile { display: none !important; }
+}
+
+/* 讓底部行動列有空間 */
+@media (max-width: 720px) {
+  body { padding-bottom: 66px; }
+}

@@ -1,0 +1,67 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Photo from '../../components/Photo.astro';
+---
+<Layout title="附近景點" description="新竹城隍廟夜市附近景點：東門城（迎曦門）、護城河親水公園、北門街老店，行路就到，通鬥做一站舊城半日遊。" ogImage="/images/east-gate.jpg">
+  <section class="page-head">
+    <div class="wrap">
+      <p class="crumbs"><a href="/">頭頁</a> ／ 附近景點</p>
+      <span class="kicker">食了通閣去佗</span>
+      <h1>附近景點</h1>
+      <p class="lede">城隍廟夜市周邊行路就到的舊城景點，鬥做一站半日遊拄好。</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap near-list">
+      <article class="near-block" id="east-gate">
+        <Photo src="east-gate.jpg" alt="東門城迎曦門" ratio="16/10" />
+        <div>
+          <span class="pill pill--red">行路約 8 分</span>
+          <h2>東門城（迎曦門）</h2>
+          <p class="tailo">Gîng-hi-mn̂g</p>
+          <p>新竹舊城「竹塹城」保存落來的重要城門地標，就佇東門圓環中央，四邊有親水廣場。對火車站行來城隍廟途中就會經過，是舊城散步的地標起點。</p>
+        </div>
+      </article>
+
+      <article class="near-block reverse" id="moat">
+        <Photo src="temple-day.jpg" alt="新竹舊城區街景" ratio="16/10" />
+        <div>
+          <span class="pill pill--red">沿路就到</span>
+          <h2>護城河親水公園</h2>
+          <p>沿東門城邊仔的護城河整理做親水公園，有水、有樹、有椅通歇。行甲跤痠，坐落來歇睏拄好，嘛適合𤆬囡仔散步。</p>
+        </div>
+      </article>
+
+      <article class="near-block" id="beimen">
+        <Photo src="temple-pailou.jpg" alt="北門街老街店面" ratio="16/10" />
+        <div>
+          <span class="pill pill--red">城隍廟邊仔</span>
+          <h2>北門街老店</h2>
+          <p>城隍廟邊仔的北門街，是竹塹舊城的老街，有百年糕餅店佮老店面。行過來看看老街景，順紲買竹塹餅、肉餅做等路。</p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="section band-cream">
+    <div class="wrap center">
+      <h2>共景點串做一條路線</h2>
+      <p class="lede" style="margin-inline:auto">火車站 → 護城河 → 東門城 → 城隍廟夜市 → 北門街 → 東門市場。</p>
+      <a class="btn btn-primary" href="/routes/#old-town-walk" style="margin-top:14px">看舊城半晡路線 →</a>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .band-cream { background: linear-gradient(180deg, var(--cream-2), var(--cream)); }
+  .near-list { display: grid; gap: 34px; }
+  .near-block { display: grid; grid-template-columns: 1fr 1fr; gap: 34px; align-items: center; }
+  .near-block.reverse :global(figure) { order: 2; }
+  .near-block h2 { margin: 8px 0 2px; }
+  .near-block .tailo { margin: 0 0 8px; }
+  @media (max-width: 760px) {
+    .near-block, .near-block.reverse { grid-template-columns: 1fr; gap: 16px; }
+    .near-block.reverse :global(figure) { order: 0; }
+  }
+</style>

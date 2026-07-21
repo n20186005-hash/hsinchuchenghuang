@@ -1,0 +1,206 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { site } from '../../data/site.js';
+
+const legend = [
+  { ico: '🍜', label: '主食' },
+  { ico: '🍢', label: '小食' },
+  { ico: '🍡', label: '甜點' },
+  { ico: '🎁', label: '等路' },
+  { ico: '🏯', label: '寺廟' },
+  { ico: 'P', label: '停車', cls: 'p' },
+  { ico: 'WC', label: '便所', cls: 'wc' },
+  { ico: '📷', label: '景點' },
+];
+---
+<Layout title="夜市導覽地圖" description="新竹城隍廟夜市原創 SVG 導覽地圖，涵蓋都城隍廟、廟埕小吃區、中山路、東門街、西安街、中央市場佮東門城方向，附外部導航連結。" ogImage="/images/temple-arch.jpg">
+  <section class="page-head">
+    <div class="wrap">
+      <p class="crumbs"><a href="/">頭頁</a> ／ 夜市地圖</p>
+      <span class="kicker">全站上愛的功能</span>
+      <h1>夜市導覽地圖</h1>
+      <p class="lede">原創手繪示意地圖，共城隍廟、廟埕小吃區佮周邊街仔路畫予你看。這毋是精準比例圖，實際行路請配外部導航。</p>
+    </div>
+  </section>
+
+  <section class="section-tight">
+    <div class="wrap">
+      <div class="map-toolbar">
+        <div class="legend">
+          {legend.map((l) => (
+            <span class="legend-item">
+              <span class:list={["lg-ico", l.cls]}>{l.ico}</span>{l.label}
+            </span>
+          ))}
+        </div>
+        <a class="btn btn-gold" href={site.mapsUrl} target="_blank" rel="noopener">開啟外部導航 ↗</a>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding-bottom:20px">
+    <div class="wrap">
+      <div class="map-frame">
+        <svg viewBox="0 0 1000 720" class="nmap" role="img" aria-label="新竹城隍廟夜市示意地圖" xmlns="http://www.w3.org/2000/svg">
+          <!-- 底 -->
+          <rect x="0" y="0" width="1000" height="720" fill="#f3ece0"/>
+          <!-- 街廓 block（低飽和暖灰） -->
+          <g fill="#e7ddcd" stroke="#dcd0bb" stroke-width="2">
+            <rect x="40" y="40" width="300" height="230" rx="8"/>
+            <rect x="660" y="40" width="300" height="230" rx="8"/>
+            <rect x="40" y="470" width="300" height="210" rx="8"/>
+            <rect x="660" y="470" width="300" height="210" rx="8"/>
+            <rect x="700" y="300" width="230" height="140" rx="8"/>
+          </g>
+
+          <!-- 道路 -->
+          <g stroke="#d8c8ac" stroke-linecap="round">
+            <!-- 中山路（橫） -->
+            <line x1="0" y1="360" x2="1000" y2="360" stroke-width="46"/>
+            <!-- 東門街（斜向東門城，右下） -->
+            <line x1="560" y1="360" x2="960" y2="640" stroke-width="34"/>
+            <!-- 西安街（直） -->
+            <line x1="380" y1="0" x2="380" y2="720" stroke-width="30"/>
+            <!-- 中央路（右直） -->
+            <line x1="640" y1="80" x2="640" y2="700" stroke-width="26"/>
+          </g>
+          <!-- 路面中線 -->
+          <g stroke="#fff" stroke-width="2" stroke-dasharray="12 12" opacity=".7">
+            <line x1="0" y1="360" x2="1000" y2="360"/>
+          </g>
+
+          <!-- 路名 -->
+          <g font-size="16" font-weight="700" fill="#a08a63">
+            <text x="60" y="352">中山路</text>
+            <text x="392" y="120" transform="rotate(90 392 120)">西安街</text>
+            <text x="652" y="150" transform="rotate(90 652 150)">中央路</text>
+            <text x="720" y="500" transform="rotate(35 720 500)">東門街</text>
+          </g>
+
+          <!-- 廟埕小吃區 底 -->
+          <rect x="360" y="250" width="270" height="150" rx="14" fill="#f7d9b0" stroke="#e6b878" stroke-width="2"/>
+          <text x="432" y="228" text-anchor="end" font-size="15" font-weight="800" fill="#b06a1e">廟埕小吃區</text>
+
+          <!-- 城隍廟 主體 -->
+          <a href="/temple/">
+            <g>
+              <rect x="430" y="280" width="130" height="90" rx="8" fill="#9e1b1b" stroke="#7a1212" stroke-width="2"/>
+              <polygon points="418,280 572,280 545,252 445,252" fill="#7a1212"/>
+              <polygon points="445,252 545,252 520,232 470,232" fill="#611010"/>
+              <text x="495" y="335" text-anchor="middle" font-size="20" font-weight="800" fill="#fff">城隍廟</text>
+              <text x="495" y="356" text-anchor="middle" font-size="11" fill="#f4d9a0">Sîng-hông-biō</text>
+            </g>
+          </a>
+
+          <!-- 食物標記（可點 → 美食頁） -->
+          <g class="markers" font-size="20" text-anchor="middle">
+            <a href="/food/#rice-noodles"><g><circle class="mk" cx="405" cy="300" r="17"/><text x="405" y="307">🍜</text></g></a>
+            <a href="/food/#meatballs"><g><circle class="mk" cx="585" cy="300" r="17"/><text x="585" y="307">🍜</text></g></a>
+            <a href="/food/#thick-soup"><g><circle class="mk" cx="405" cy="352" r="17"/><text x="405" y="359">🍜</text></g></a>
+            <a href="/food/#oyster-omelet"><g><circle class="mk" cx="470" cy="392" r="17"/><text x="470" y="399">🍢</text></g></a>
+            <a href="/food/#braised-pork-rice"><g><circle class="mk" cx="530" cy="392" r="17"/><text x="530" y="399">🍜</text></g></a>
+            <a href="/food/#souvenirs"><g><circle class="mk" cx="300" cy="330" r="17"/><text x="300" y="337">🎁</text></g></a>
+            <g><circle class="mk" cx="620" cy="250" r="17"/><text x="620" y="257">🍡</text></g>
+            <!-- 中央市場 -->
+            <a href="/food/"><g><circle class="mk mk-lg" cx="800" cy="360" r="20"/><text x="800" y="368">🍢</text></g></a>
+          </g>
+          <text x="800" y="330" text-anchor="middle" font-size="14" font-weight="700" fill="#8a6a3a">中央市場</text>
+
+          <!-- 服務標記 -->
+          <g font-size="15" font-weight="800" text-anchor="middle">
+            <g><circle cx="150" cy="150" r="18" fill="#2f6f4f"/><text x="150" y="156" fill="#fff">P</text></g>
+            <g><circle cx="820" cy="150" r="18" fill="#2f6f4f"/><text x="820" y="156" fill="#fff">P</text></g>
+            <g><circle cx="150" cy="560" r="18" fill="#2f6f4f"/><text x="150" y="566" fill="#fff">P</text></g>
+            <g><circle cx="330" cy="300" r="15" fill="#3a6ea5"/><text x="330" y="305" fill="#fff" font-size="11">WC</text></g>
+            <g><circle cx="655" cy="410" r="15" fill="#3a6ea5"/><text x="655" y="415" fill="#fff" font-size="11">WC</text></g>
+          </g>
+
+          <!-- 方向指標 -->
+          <g font-size="15" font-weight="800">
+            <g class="dir"><rect x="20" y="330" width="150" height="34" rx="17" fill="#fff" stroke="#e0cfae"/><text x="95" y="352" text-anchor="middle" fill="#7a1212">← 西門市場方向</text></g>
+            <g class="dir"><rect x="380" y="12" width="150" height="34" rx="17" fill="#fff" stroke="#e0cfae"/><text x="455" y="34" text-anchor="middle" fill="#7a1212">北門街方向 ↑</text></g>
+            <g class="dir"><rect x="820" y="612" width="160" height="34" rx="17" fill="#fff" stroke="#e0cfae"/><text x="900" y="634" text-anchor="middle" fill="#7a1212">東門城方向 ↘</text></g>
+            <g class="dir"><rect x="410" y="672" width="180" height="34" rx="17" fill="#fff" stroke="#e0cfae"/><text x="500" y="694" text-anchor="middle" fill="#7a1212">↓ 新竹火車站方向</text></g>
+          </g>
+
+          <!-- 景點：東門城 -->
+          <a href="/nearby/#east-gate">
+            <g><circle cx="915" cy="600" r="20" fill="#b8892b"/><text x="915" y="607" text-anchor="middle" font-size="18">📷</text></g>
+          </a>
+        </svg>
+      </div>
+      <p class="map-note">
+        ※ 本圖為示意用途，位置經簡化，毋是精準比例地圖。地址：{site.address}。實際行路請以
+        <a href={site.mapsUrl} target="_blank" rel="noopener">Google／Apple 地圖</a>導航為準。
+      </p>
+    </div>
+  </section>
+
+  <!-- 真實 Google 地圖 -->
+  <section class="section-tight">
+    <div class="wrap">
+      <span class="kicker">真實地圖</span>
+      <h2>佇 Google 地圖看城隍廟夜市</h2>
+      <p class="lede">頂懸是示意圖，下跤是實際位置。會使直接放大、看街景抑點導航。</p>
+      <div class="gmap-frame">
+        <iframe
+          src={site.mapsEmbed}
+          title="新竹市城隍廟夜市 Google 地圖"
+          style="border:0;"
+          allowfullscreen
+          loading="lazy"
+          referrerpolicy="strict-origin-when-cross-origin"></iframe>
+      </div>
+      <p class="map-note">
+        地址：{site.address}。實際行路請以
+        <a href={site.mapsUrl} target="_blank" rel="noopener">Google 地圖</a>導航為準。
+      </p>
+    </div>
+  </section>
+
+  <!-- 地圖下方四條固定路線 -->
+  <section class="section band-cream">
+    <div class="wrap">
+      <span class="kicker">照圖行</span>
+      <h2>四條好用路線</h2>
+      <div class="grid grid-4" style="margin-top:22px">
+        <a class="card mini-route" href="/routes/#two-hours"><div class="card__body"><h3 class="card__title">頭一擺必食</h3><p>拜拜 → 廟埕主食 → 小食 → 甜點</p></div></a>
+        <a class="card mini-route" href="/routes/#two-person-food-walk"><div class="card__body"><h3 class="card__title">兩人分食</h3><p>逐項分兩份，食著較濟款</p></div></a>
+        <a class="card mini-route" href="/routes/#rainy-day"><div class="card__body"><h3 class="card__title">落雨少行路</h3><p>儘量佇廟埕佮市場內底</p></div></a>
+        <a class="card mini-route" href="/routes/#old-town-walk"><div class="card__body"><h3 class="card__title">食了散步</h3><p>接東門城、北門街舊城𨑨迌</p></div></a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .band-cream { background: linear-gradient(180deg, var(--cream-2), var(--cream)); }
+  .map-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 18px; flex-wrap: wrap; }
+  .legend { display: flex; flex-wrap: wrap; gap: 14px; }
+  .legend-item { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; font-size: .9rem; color: var(--ink-soft); }
+  .lg-ico {
+    width: 26px; height: 26px; border-radius: 50%; background: #fff; border: 1px solid var(--line);
+    display: grid; place-items: center; font-size: .95rem;
+  }
+  .lg-ico.p { background: #2f6f4f; color: #fff; font-weight: 800; }
+  .lg-ico.wc { background: #3a6ea5; color: #fff; font-size: .62rem; font-weight: 800; }
+
+  .map-frame {
+    border: 1px solid var(--line); border-radius: var(--radius-lg); overflow: hidden;
+    box-shadow: var(--shadow); background: #f3ece0;
+  }
+  .nmap { width: 100%; height: auto; display: block; }
+  .markers .mk { fill: #fff; stroke: #e6b878; stroke-width: 2; transition: transform .15s, fill .15s; }
+  .markers a { cursor: pointer; }
+  .markers a:hover .mk { fill: #fbeede; stroke: var(--red); }
+  .markers .mk-lg { stroke: var(--gold); }
+  .map-note { font-size: .86rem; color: var(--stone); margin-top: 12px; }
+  .mini-route { text-decoration: none; color: inherit; }
+  .gmap-frame {
+    margin-top: 16px; border: 1px solid var(--line); border-radius: var(--radius-lg);
+    overflow: hidden; box-shadow: var(--shadow); background: var(--cream-2);
+    aspect-ratio: 16 / 9;
+  }
+  .gmap-frame iframe { width: 100%; height: 100%; display: block; }
+  @media (max-width: 600px) { .gmap-frame { aspect-ratio: 4 / 3; } }
+</style>

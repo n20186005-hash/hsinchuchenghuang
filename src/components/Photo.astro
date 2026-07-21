@@ -1,0 +1,18 @@
+---
+import { credits } from '../data/site.js';
+const { src, alt, ratio = '4/3', rounded = true, className = '', caption } = Astro.props;
+const c = credits[src];
+---
+<figure class:list={["photo", className]}>
+  <img src={`/images/${src}`} alt={alt} loading="lazy" decoding="async"
+       style={`aspect-ratio:${ratio};${rounded ? 'border-radius:var(--radius);' : ''}`} />
+  <figcaption>
+    {caption ? <span>{caption}　</span> : null}
+    {c ? <span class="cred">相片：{c.by}／{c.lic}（Wikimedia Commons）</span> : null}
+  </figcaption>
+</figure>
+
+<style>
+  .photo img { width: 100%; object-fit: cover; box-shadow: var(--shadow-sm); }
+  .cred { color: var(--stone); }
+</style>

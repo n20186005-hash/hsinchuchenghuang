@@ -1,0 +1,56 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import BottomNav from '../components/BottomNav.astro';
+import { site } from '../data/site.js';
+
+const {
+  title,
+  description = '整理新竹城隍廟夜市必食美食、夜市地圖、一般營業時段、交通停車、參拜導覽佮舊城散步路線，適合頭一擺來新竹城隍廟的旅客。',
+  ogImage = '/images/temple-night.jpg',
+  jsonld,
+} = Astro.props;
+
+const fullTitle = title ? `${title}｜${site.name}` : `${site.name}｜必食美食、地圖、交通停車佮𨑨迌法`;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+---
+<!-- lang="nan-Hant-TW"：台語（漢字） -->
+<html lang="nan-Hant-TW">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{fullTitle}</title>
+  <meta name="description" content={description} />
+  <link rel="canonical" href={canonical} />
+  <meta name="theme-color" content="#9e1b1b" />
+  <link rel="icon" href="/icons/favicon.svg" type="image/svg+xml" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content={site.name} />
+  <meta property="og:title" content={fullTitle} />
+  <meta property="og:description" content={description} />
+  <meta property="og:image" content={new URL(ogImage, Astro.site).href} />
+  <meta property="og:locale" content="nan_Hant_TW" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  {jsonld && <script type="application/ld+json" set:html={JSON.stringify(jsonld)} />}
+</head>
+<body>
+  <a href="#main" class="skip">跳過選單，直接看內容</a>
+  <Header />
+  <main id="main">
+    <slot />
+  </main>
+  <Footer />
+  <BottomNav />
+
+  <style>
+    .skip {
+      position: absolute; left: -999px; top: 0; background: var(--red); color: #fff;
+      padding: 10px 16px; z-index: 100; border-radius: 0 0 8px 0;
+    }
+    .skip:focus { left: 0; color: #fff; }
+  </style>
+</body>
+</html>
