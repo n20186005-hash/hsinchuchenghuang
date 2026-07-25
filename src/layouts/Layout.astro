@@ -35,6 +35,15 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
   <meta name="twitter:card" content="summary_large_image" />
 
   {jsonld && <script type="application/ld+json" set:html={JSON.stringify(jsonld)} />}
+
+  <!-- Google tag (gtag.js) -->
+  <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-HXM22WWPKP"></script>
+  <script is:inline define:vars={{ GA_ID: 'G-HXM22WWPKP' }}>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', GA_ID);
+  </script>
 </head>
 <body>
   <a href="#main" class="skip">跳過選單，直接看內容</a>
