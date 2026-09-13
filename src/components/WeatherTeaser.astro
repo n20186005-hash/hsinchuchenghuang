@@ -1,0 +1,300 @@
+---
+import { WEATHER_ICONS } from '../data/weatherIcons.js';
+
+const { heading = '出門進前，先看一下天氣' } = Astro.props;
+---
+
+<aside class="wx-teaser" data-wx-teaser>
+  <svg class="wx-sprite" aria-hidden="true" focusable="false">
+    {Object.entries(WEATHER_ICONS).map(([key, body]) => (
+      <symbol id={`wx-${key}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" set:html={body} />
+    ))}
+  </svg>
+
+  <div class="wx-teaser__head">
+    <span class="kicker">即時天氣</span>
+    <h3>{heading}</h3>
+  </div>
+
+  <div class="wx-teaser__body" data-wx-body>
+    <p class="wx-teaser__fallback">
+      新竹的風誠有名。秋冬「九降風」透起來，風冷比溫度較有感；5～6 月是梅雨，7～9 月是颱風季。
+      欲知影今仔日敢愛帶傘、風大無大、海邊佮山仔去會使得，看即時預報上準。
+    </p>
+  </div>
+
+  <p class="wx-teaser__foot">
+    <a class="btn btn-ghost" href="/weather/">看即時天氣、未來 7 日佮四季策略 →</a>
+  </p>
+</aside>
+
+<script is:inline>
+  (function () {
+    var root = document.querySelector('[data-wx-teaser]');
+    if (!root) return;
+    var body = root.querySelector('[data-wx-body]');
+    if (!body || typeof fetch !== 'function') return;
+
+    var W = ['週日', '週一', '週二', '週三', '週四', '週五', '週六'];
+
+    function icon(key) {
+      var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('viewBox', '0 0 24 24');
+      svg.setAttribute('class', 'wx-teaser__icon');
+      svg.setAttribute('aria-hidden', 'true');
+      var use = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+      use.setAttribute('href', '#wx-' + (key || 'partly-cloudy'));
+      svg.appendChild(use);
+      return svg;
+    }
+
+    function el(tag, cls, text) {
+      var n = document.createElement(tag);
+      if (cls) n.className = cls;
+      if (text !== undefined && text !== null) n.textContent = String(text);
+      return n;
+    }
+
+    function render(d) {
+      var c = d.current || {};
+      var today = d.today || {};
+      var a = d.advice || {};
+      var m = a.metrics || {};
+      var days = (d.daily || []).slice(0, 4);
+
+      body.textContent = '';
+
+      // 一句話結論
+      if (a.headline && a.headline.text) {
+        body.appendChild(el('p', 'wx-teaser__head-line is-' + (a.headline.tone || 'ok'), a.headline.text));
+      }
+
+      // 現在的狀況
+      var now = el('div', 'wx-teaser__now');
+      now.appendChild(icon(c.icon));
+      var main = el('div', 'wx-teaser__main');
+      main.appendChild(el('p', 'wx-teaser__temp', Math.round(c.temp) + '°C'));
+      main.appendChild(el('p', 'wx-teaser__desc', c.desc || ''));
+      main.appendChild(el('p', 'wx-teaser__feels', '體感 ' + Math.round(c.feels) + ' °C'));
+      now.appendChild(main);
+      body.appendChild(now);
+
+      // 風險提醒（有才顯示）
+      (a.risk || []).slice(0, 2).forEach(function (r) {
+        var box = el('div', 'wx-teaser__risk is-' + (r.tone || 'warn'));
+        box.appendChild(el('span', 'wx-teaser__risk-icon', r.icon || '！'));
+        var t = el('div');
+        t.appendChild(el('strong', null, r.title));
+        t.appendChild(el('p', null, r.text));
+        box.appendChild(t);
+        body.appendChild(box);
+      });
+
+      // 指標
+      var chips = el('ul', 'wx-teaser__chips');
+      [
+        ['降雨機率', m.peakProb != null ? Math.round(m.peakProb) + '%' : '—'],
+        ['風', m.windLevelText || '—'],
+        ['紫外線', m.uv ? m.uv.label + ' ' + m.uv.value : '—'],
+        ['濕度', m.humidityText || (c.humidity != null ? Math.round(c.humidity) + '%' : '—')],
+      ].forEach(function (pair) {
+        var li = el('li');
+        li.appendChild(el('span', null, pair[0]));
+        li.appendChild(el('strong', null, pair[1]));
+        chips.appendChild(li);
+      });
+      body.appendChild(chips);
+
+      // 穿搭佮安排各揀上重要的一條
+      if (a.dress && a.dress[0]) {
+        var d1 = el('div', 'wx-teaser__tip');
+        d1.appendChild(el('span', 'wx-teaser__tip-tag', '出行穿搭'));
+        d1.appendChild(el('strong', null, a.dress[0].title));
+        d1.appendChild(el('p', null, a.dress[0].text));
+        body.appendChild(d1);
+      }
+      if (a.plan && a.plan[0]) {
+        var d2 = el('div', 'wx-teaser__tip');
+        d2.appendChild(el('span', 'wx-teaser__tip-tag', '遊玩安排'));
+        d2.appendChild(el('strong', null, a.plan[0].title));
+        d2.appendChild(el('p', null, a.plan[0].text));
+        body.appendChild(d2);
+      }
+
+      // 隨身物品
+      if (a.pack && a.pack.length) {
+        var packWrap = el('div', 'wx-teaser__pack');
+        packWrap.appendChild(el('span', 'wx-teaser__pack-tag', '隨身物品'));
+        var ul = el('ul');
+        a.pack.slice(0, 6).forEach(function (p) {
+          var li = el('li');
+          li.appendChild(el('strong', null, p.label));
+          li.appendChild(el('em', null, p.why));
+          ul.appendChild(li);
+        });
+        packWrap.appendChild(ul);
+        body.appendChild(packWrap);
+      }
+
+      // 場景（市區／山仔／海邊／河湖）
+      if (a.scenes && a.scenes.length) {
+        var row = el('ul', 'wx-teaser__scenes');
+        a.scenes.forEach(function (s) {
+          var li = el('li', 'is-' + s.level);
+          li.appendChild(el('span', 'wx-teaser__scene-badge', s.badge));
+          li.appendChild(el('strong', null, s.name));
+          li.appendChild(el('em', null, s.levelLabel));
+          row.appendChild(li);
+        });
+        body.appendChild(row);
+      }
+
+      // 未來幾日
+      if (days.length) {
+        var daysRow = el('ul', 'wx-teaser__days');
+        days.forEach(function (day, i) {
+          var li = el('li');
+          var label = i === 0 ? '今仔日' : W[new Date(day.date + 'T12:00:00+08:00').getUTCDay()] || '';
+          li.appendChild(el('span', 'wx-teaser__day-name', label));
+          li.appendChild(icon(day.icon));
+          li.appendChild(el('span', 'wx-teaser__day-temp', Math.round(day.tMin) + '° / ' + Math.round(day.tMax) + '°'));
+          li.appendChild(el('span', 'wx-teaser__day-pop', (day.precipProbMax || 0) + '%'));
+          daysRow.appendChild(li);
+        });
+        body.appendChild(daysRow);
+      }
+
+      body.appendChild(el('p', 'wx-teaser__updated',
+        '更新 ' + (d.updatedLabel || '') + '・日頭出來 ' + (today.sunrise || '—') + '・落山 ' + (today.sunset || '—')));
+    }
+
+    fetch('/api/weather.json', { headers: { accept: 'application/json' } })
+      .then(function (r) { return r.ok ? r.json() : Promise.reject(new Error('bad')); })
+      .then(function (d) { if (d && d.ok) render(d); })
+      .catch(function () { /* 保持原本的靜態說明 */ });
+  })();
+</script>
+
+<style>
+  .wx-sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+
+  .wx-teaser {
+    position: relative;
+    background: linear-gradient(180deg, #fdfaf4, var(--paper));
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 22px 24px;
+    box-shadow: var(--shadow);
+  }
+  .wx-teaser__head h3 { margin: 6px 0 0; font-size: 1.2rem; }
+
+  .wx-teaser__fallback { margin: 14px 0 0; color: var(--ink-soft, var(--stone)); font-size: .92rem; line-height: 1.75; }
+
+  .wx-teaser__head-line {
+    margin: 16px 0 0; padding: 12px 16px; border-radius: 12px;
+    background: #f4f7f4; border-left: 5px solid #3f8f5f;
+    font-size: .96rem; font-weight: 700;
+  }
+  .wx-teaser__head-line.is-warn { background: #fdf7ec; border-left-color: var(--gold); }
+  .wx-teaser__head-line.is-alert { background: #fdf0ef; border-left-color: var(--red); color: var(--red-dark); }
+
+  .wx-teaser__now { display: flex; align-items: center; gap: 16px; margin-top: 14px; color: var(--red); }
+  .wx-teaser__icon { width: 42px; height: 42px; flex: none; }
+  .wx-teaser__main { color: var(--ink); }
+  .wx-teaser__temp { margin: 0; font-size: 2.2rem; font-weight: 800; line-height: 1; }
+  .wx-teaser__desc { margin: 6px 0 2px; font-weight: 700; }
+  .wx-teaser__feels { margin: 0; font-size: .8rem; color: var(--stone); }
+
+  .wx-teaser__risk {
+    display: flex; gap: 12px; align-items: flex-start; margin-top: 12px;
+    padding: 12px 14px; border-radius: 12px; background: #fdf0ef; border: 1px solid #f0cfcb;
+  }
+  .wx-teaser__risk.is-warn { background: #fffcf4; border-color: #f2e5cd; }
+  .wx-teaser__risk-icon {
+    flex: none; width: 28px; height: 28px; display: grid; place-items: center;
+    border-radius: 8px; background: var(--red); color: #fff; font-weight: 800; font-size: .8rem;
+  }
+  .wx-teaser__risk.is-warn .wx-teaser__risk-icon { background: #d18b2c; }
+  .wx-teaser__risk strong { font-size: .9rem; color: var(--red-dark); }
+  .wx-teaser__risk p { margin: 3px 0 0; font-size: .84rem; line-height: 1.7; color: var(--ink-soft); }
+
+  .wx-teaser__chips {
+    list-style: none; margin: 14px 0 0; padding: 0;
+    display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px;
+  }
+  .wx-teaser__chips li {
+    background: var(--cream-2, #f8f4ec); border-radius: 10px; padding: 8px 10px;
+    display: flex; flex-direction: column; gap: 2px;
+  }
+  .wx-teaser__chips span { font-size: .72rem; color: var(--stone); }
+  .wx-teaser__chips strong { font-size: .88rem; }
+
+  .wx-teaser__tip {
+    margin-top: 12px; padding: 11px 14px; border-radius: 12px;
+    border-left: 4px solid var(--gold); background: #fdf8ef;
+  }
+  .wx-teaser__tip-tag {
+    display: inline-block; margin-bottom: 4px; font-size: .7rem; font-weight: 800;
+    letter-spacing: .06em; color: var(--stone);
+  }
+  .wx-teaser__tip strong { display: block; font-size: .92rem; }
+  .wx-teaser__tip p { margin: 3px 0 0; font-size: .86rem; line-height: 1.7; color: var(--ink-soft); }
+
+  .wx-teaser__pack { margin-top: 14px; }
+  .wx-teaser__pack-tag {
+    display: block; margin-bottom: 6px; font-size: .7rem; font-weight: 800;
+    letter-spacing: .06em; color: var(--stone);
+  }
+  .wx-teaser__pack ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+  .wx-teaser__pack li {
+    display: grid; gap: 1px; padding: 7px 12px; border-radius: 9px;
+    background: var(--cream-2, #f8f4ec); border: 1px solid var(--line);
+  }
+  .wx-teaser__pack strong { font-size: .84rem; }
+  .wx-teaser__pack em { font-style: normal; font-size: .7rem; color: var(--stone); }
+
+  .wx-teaser__scenes {
+    list-style: none; margin: 14px 0 0; padding: 0;
+    display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px;
+  }
+  .wx-teaser__scenes li {
+    display: grid; justify-items: center; gap: 3px; padding: 10px 4px;
+    border-radius: 10px; border: 1px solid var(--line); background: #f4f7f4;
+  }
+  .wx-teaser__scene-badge {
+    width: 26px; height: 26px; display: grid; place-items: center; border-radius: 8px;
+    background: #3f8f5f; color: #fff; font-size: .8rem; font-weight: 800;
+  }
+  .wx-teaser__scenes li.is-ok { background: #f2f5fa; }
+  .wx-teaser__scenes li.is-ok .wx-teaser__scene-badge { background: #6b8fc4; }
+  .wx-teaser__scenes li.is-caution { background: #fdf8ef; }
+  .wx-teaser__scenes li.is-caution .wx-teaser__scene-badge { background: var(--gold); }
+  .wx-teaser__scenes li.is-avoid { background: #fdf0ef; }
+  .wx-teaser__scenes li.is-avoid .wx-teaser__scene-badge { background: var(--red); }
+  .wx-teaser__scenes strong { font-size: .8rem; }
+  .wx-teaser__scenes em { font-style: normal; font-size: .7rem; color: var(--stone); }
+
+  .wx-teaser__days {
+    list-style: none; margin: 14px 0 0; padding: 0;
+    display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px;
+  }
+  .wx-teaser__days li {
+    display: grid; justify-items: center; gap: 4px; padding: 10px 4px;
+    border: 1px solid var(--line); border-radius: 10px; color: var(--red);
+  }
+  .wx-teaser__day-name { font-size: .76rem; color: var(--stone); }
+  .wx-teaser__days .wx-teaser__icon { width: 22px; height: 22px; }
+  .wx-teaser__day-temp { font-size: .8rem; font-weight: 700; color: var(--ink); }
+  .wx-teaser__day-pop { font-size: .72rem; color: #48699b; }
+
+  .wx-teaser__updated { margin: 12px 0 0; font-size: .76rem; color: var(--stone); }
+
+  .wx-teaser__foot { margin: 18px 0 0; }
+
+  @media (max-width: 620px) {
+    .wx-teaser { padding: 18px; }
+    .wx-teaser__chips { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .wx-teaser__days { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .wx-teaser__scenes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+</style>

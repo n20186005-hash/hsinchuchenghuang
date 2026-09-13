@@ -3,17 +3,70 @@ import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import BottomNav from '../components/BottomNav.astro';
-import { site } from '../data/site.js';
+import Sources from '../components/Sources.astro';
+import { site, entity } from '../data/site.js';
 
 const {
   title,
   description = '整理新竹城隍廟夜市必食美食、夜市地圖、一般營業時段、交通停車、參拜導覽佮舊城散步路線，適合頭一擺來新竹城隍廟的旅客。',
   ogImage = '/images/temple-night.jpg',
+  ogImageAlt,
   jsonld,
 } = Astro.props;
 
 const fullTitle = title ? `${title}｜${site.name}` : `${site.name}｜必食美食、地圖、交通停車佮𨑨迌法`;
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const ogImageUrl = new URL(ogImage, Astro.site).href;
+const ogAlt = ogImageAlt ?? `${entity.fullName}（${entity.fullNameEn}）— ${entity.city}夜景`;
+
+// JSON-LD 支援單一物件抑是陣列
+const jsonldBlocks = (Array.isArray(jsonld) ? jsonld : jsonld ? [jsonld] : []).filter(Boolean);
+
+// 全站固定：WebSite 實體（@id 錨定域名）
+const websiteJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  '@id': `${site.url}/#website`,
+  name: site.name,
+  alternateName: [site.nameTailo, entity.fullName, entity.fullNameEn],
+  url: site.url,
+  inLanguage: 'nan-Hant-TW',
+  about: { '@id': `${site.url}/#attraction` },
+  publisher: { '@id': `${site.url}/#organization` },
+};
+
+// 全站固定：Organization 實體（獨立旅遊資訊網站）
+const orgJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  '@id': `${site.url}/#organization`,
+  name: site.name,
+  url: site.url,
+  logo: `${site.url}/icons/icon-512.png`,
+  description: '新竹城隍廟夜市（Chenghuang Temple Night Market）獨立旅遊資訊指南。',
+  disclaimer: '本站是獨立旅遊資訊網站，毋是新竹都城隍廟、新竹市政府抑是店家的官方網站。',
+};
+
+// 非首頁自動產生 BreadcrumbList
+const isHome = Astro.url.pathname === '/';
+const crumbs = [
+  { name: '頭頁', url: `${site.url}/` },
+  ...(isHome ? [] : [{ name: title || entity.shortName, url: canonical }]),
+];
+const breadcrumbJsonLd = crumbs.length > 1
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: crumbs.map((c, i) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        name: c.name,
+        item: c.url,
+      })),
+    }
+  : null;
+
+const allJsonLd = [...jsonldBlocks, websiteJsonLd, orgJsonLd, breadcrumbJsonLd].filter(Boolean);
 ---
 <!-- lang="nan-Hant-TW"：台語（漢字） -->
 <html lang="nan-Hant-TW">
@@ -23,18 +76,41 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
   <title>{fullTitle}</title>
   <meta name="description" content={description} />
   <link rel="canonical" href={canonical} />
+  <meta name="robots" content="index, follow, max-image-preview:large" />
   <meta name="theme-color" content="#9e1b1b" />
   <link rel="icon" href="/icons/favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" sizes="192x192" href="/icons/icon-192.png" />
+
+  <!-- PWA -->
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <meta name="application-name" content={site.name} />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="城隍廟夜市" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="format-detection" content="telephone=no" />
+
+  <!-- 地理位置（實體綁定） -->
+  <meta name="geo.region" content="TW-HSZ" />
+  <meta name="geo.placename" content="Hsinchu City" />
+  <meta name="geo.position" content={`${entity.latitude};${entity.longitude}`} />
+  <meta name="ICBM" content={`${entity.latitude}, ${entity.longitude}`} />
 
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content={site.name} />
   <meta property="og:title" content={fullTitle} />
   <meta property="og:description" content={description} />
-  <meta property="og:image" content={new URL(ogImage, Astro.site).href} />
+  <meta property="og:url" content={canonical} />
+  <meta property="og:image" content={ogImageUrl} />
+  <meta property="og:image:alt" content={ogAlt} />
   <meta property="og:locale" content="nan_Hant_TW" />
   <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={fullTitle} />
+  <meta name="twitter:description" content={description} />
+  <meta name="twitter:image" content={ogImageUrl} />
+  <meta name="twitter:image:alt" content={ogAlt} />
 
-  {jsonld && <script type="application/ld+json" set:html={JSON.stringify(jsonld)} />}
+  {allJsonLd.map((block) => <script type="application/ld+json" set:html={JSON.stringify(block)} />)}
 
   <!-- Google tag (gtag.js) -->
   <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-HXM22WWPKP"></script>
@@ -51,8 +127,18 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
   <main id="main">
     <slot />
   </main>
+  <Sources />
   <Footer />
   <BottomNav />
+
+  <script is:inline>
+    // PWA：註冊 Service Worker（純靜態離線快取）
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch(() => {});
+      });
+    }
+  </script>
 
   <style>
     .skip {

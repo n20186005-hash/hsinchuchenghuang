@@ -1,32 +1,141 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Photo from '../components/Photo.astro';
-import { site, foods, routes } from '../data/site.js';
+import WeatherTeaser from '../components/WeatherTeaser.astro';
+import { site, entity, foods, routes } from '../data/site.js';
+import { seasons } from '../data/climate.js';
+import { visitorServices } from '../data/visitor.js';
+import { cityIntro, timeline } from '../data/history.js';
 
 const homeFoods = foods.slice(0, 6);
 const timeRoutes = routes.filter((r) => ['one-hour', 'two-hours', 'old-town-walk'].includes(r.slug));
 
-const jsonld = {
+const rating = entity.rating;
+
+// 首頁常見問題（畫面看會著，同步供 FAQPage schema 使用）
+const homeFaqs = [
+  {
+    q: `${entity.fullName}佇佗位？`,
+    a: `Where is ${entity.fullName} located? — ${entity.fullName}（${entity.fullNameEn}）佇${entity.country}${entity.city}${entity.district}${entity.streetAddress}，Plus Code：${entity.plusCode}。`,
+  },
+  {
+    q: `${entity.shortName}愛錢無？`,
+    a: `Is ${entity.shortName} free to visit? — 免錢。廟埕佮街仔路是公共空間，全年會使自由來行踏；只有各店家的小食愛家己開錢。`,
+  },
+  {
+    q: '暗時才有開？日時來有通食無？',
+    a: '毋是干焦暗時。真濟廟埕老店對中晝就開始賣，日時來嘛食會著；暗時較有夜市氣氛、人嘛較濟。逐間時間無仝，出發進前請看店家公告。',
+  },
+  {
+    q: '對新竹火車站按怎去？',
+    a: `對台鐵新竹站行路約 10～15 分：沿中正路過東門圓環（東門城），越入中山路就到 ${entity.fullName}。詳細看交通停車頁。`,
+  },
+  {
+    q: '附近有啥物景點通順紲去？',
+    a: `順紲會使去${entity.landmarks[0]}、${entity.landmarks[1]}、${entity.landmarks[2]}佮${entity.landmarks[3]}，攏佇行路範圍；欲有系統，照舊城半晡路線行上四序。`,
+  },
+  {
+    q: `${entity.fullName}的 Google 評分偌濟？`,
+    a: `根據 ${rating.source}（${rating.sourceEn}）公開資訊，${entity.fullName} 評分 ${rating.value} 分，累積 ${rating.count.toLocaleString('en-US')} 則評論（${rating.checked}查核）。數字會綴評論變動，請以來源頁面為準。`,
+  },
+  {
+    q: '愛留偌濟時間？',
+    a: '干焦欲食，1 點鐘就夠；欲順紲拜拜、散步，抓 2～3 點鐘較四序。欲連舊城景點做一睏，會使安排半日。',
+  },
+  {
+    q: '開車來，車停佗位？',
+    a: '莫共車直接駛入廟口細巷。先揀車站抑東門城附近的收費停車場，行路 5～10 分入夜市較省事。放假時人濟車位歹揣，早寡來較好。',
+  },
+];
+
+// 1. 結構化資料：TouristAttraction 實體綁定（@id + image + geo + hasMap + sameAs）
+const attractionJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'TouristAttraction',
-  name: '新竹都城隍廟・城隍廟夜市',
-  description: '以新竹都城隍廟為中心的廟口小吃佮夜市美食區。',
-  address: { '@type': 'PostalAddress', streetAddress: '中山路 75 號', addressLocality: '新竹市北區', addressCountry: 'TW' },
+  '@id': `${site.url}/#attraction`,
+  name: entity.fullName,
+  alternateName: [entity.fullNameEn, entity.shortNameEn, ...entity.aliases],
+  description: `Comprehensive visitor guide to ${entity.fullName} (${entity.fullNameEn}) in ${entity.cityEn}, ${entity.countryEn}.`,
+  url: `${site.url}/`,
+  image: [
+    `${site.url}/images/market-night.jpg`,
+    `${site.url}/images/temple-night.jpg`,
+    `${site.url}/images/temple-facade.jpg`,
+    `${site.url}/images/food-gongwan.jpg`,
+    `${site.url}/images/east-gate.jpg`,
+  ],
   isAccessibleForFree: true,
-  touristType: '美食旅遊、古蹟參觀',
+  touristType: '美食旅遊、夜市、古蹟參觀',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: entity.streetAddress,
+    addressLocality: `${entity.city}${entity.district}`,
+    addressRegion: entity.stateProvince,
+    postalCode: entity.postalCode,
+    addressCountry: entity.countryCode,
+  },
+  geo: {
+    '@type': 'GeoCoordinates',
+    latitude: entity.latitude,
+    longitude: entity.longitude,
+  },
+  hasMap: entity.mapsShareUrl,
+  telephone: entity.phone,
+  publicAccess: true,
+  sameAs: [entity.mapsShareUrl, entity.tourismUrl, entity.templeOfficialUrl, entity.cityGovUrl],
+  aggregateRating: {
+    '@type': 'AggregateRating',
+    ratingValue: rating.value,
+    reviewCount: rating.count,
+    bestRating: rating.best,
+    worstRating: rating.worst,
+  },
+  includesAttraction: entity.landmarks.map((name) => ({ '@type': 'TouristAttraction', name })),
+  isPartOf: { '@id': `${site.url}/#website` },
 };
+
+// 2. FAQPage
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: homeFaqs.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+};
+
+const jsonld = [attractionJsonLd, faqJsonLd];
 ---
 <Layout jsonld={jsonld}>
   <!-- 1. 首屏 -->
   <section class="hero">
-    <div class="hero-bg" style="background-image:url('/images/market-night.jpg')"></div>
+    <img
+      class="hero-bg"
+      src="/images/market-night.jpg"
+      alt={`${entity.fullName} - Main view in ${entity.cityEn}, ${entity.countryEn}`}
+      loading="eager"
+      fetchpriority="high"
+      decoding="async" />
     <div class="hero-scrim"></div>
     <div class="wrap hero-inner">
       <span class="kicker kicker-light">新竹廟口・夜市指南</span>
       <h1>新竹城隍廟夜市指南</h1>
+      <p class="hero-official">
+        官方名稱：{entity.fullName}（{entity.fullNameEn}）・{entity.city}{entity.district}
+      </p>
       <p class="hero-lede">
         頭一擺來食啥物、按怎<span class="ruby-w">𨑨迌</span>、車停佗位，一擺共你整理予好勢。<br>
         <span class="tailo">Sin-tik Sîng-hông-biō — chia̍h-mi̍h、án-ná tshit-thô、thîng-tshia</span>
+      </p>
+      <p class="hero-rating">
+        <span class="rating-stars" aria-hidden="true">★★★★☆</span>
+        <strong class="rating-score">{rating.value}／{rating.best}</strong>
+        <span class="rating-count">{rating.count.toLocaleString('en-US')} 則評論</span>
+        <span class="rating-src">
+          資料來源：<a href={rating.sourceUrl} target="_blank" rel="noopener noreferrer">{rating.source}</a>
+          （{rating.checked}查核）
+        </span>
       </p>
       <div class="hero-facts">
         <span class="pill pill--gold">門票免費</span>
@@ -72,6 +181,99 @@ const jsonld = {
           <p>通佮東門城、北門街做一站舊城𨑨迌。</p>
         </div></div>
       </div>
+    </div>
+  </section>
+
+  <!-- 2.5 SEO 實體綁定：單景點 Entity Section（About / Location / Landmarks / History） -->
+  <section class="section band-entity" id="about-attraction">
+    <div class="wrap">
+      <nav class="entity-crumbs" aria-label="地理歸屬">
+        <ol>
+          <li>{entity.country}</li>
+          <li>{entity.city}</li>
+          <li>{entity.district}</li>
+          <li aria-current="page">{entity.fullName}</li>
+        </ol>
+      </nav>
+
+      <span class="kicker">Entity / 實體</span>
+      <h2>About {entity.fullName}（{entity.fullNameEn}）</h2>
+      <p class="lede">
+        Welcome to <strong>{entity.fullName}</strong>, widely recognized as the central
+        <strong>{entity.shortNameEn}</strong>（{entity.shortName}）. Located in the heart of
+        <strong>{entity.cityEn}</strong>, {entity.stateProvinceEn}, {entity.countryEn},
+        this destination serves as a primary hub for travelers visiting the region.
+      </p>
+      <p class="lede">
+        換咱的話講：<strong>{entity.fullName}</strong>就是逐家上熟悉的<strong>{entity.shortName}</strong>，
+        位佇{entity.country}{entity.city}{entity.district}，是旅客來到新竹上主要的美食佮信仰中心。
+      </p>
+
+      <div class="grid grid-3" style="margin-top:24px">
+        <div class="card"><div class="card__body">
+          <h3 class="card__title">地址佮座標</h3>
+          <p>{entity.country}{entity.city}{entity.district}{entity.streetAddress}</p>
+          <p class="tailo">Plus Code：{entity.plusCode}</p>
+          <p class="tailo">經緯度：{entity.latitude}, {entity.longitude}</p>
+        </div></div>
+        <div class="card"><div class="card__body">
+          <h3 class="card__title">聯絡佮類別</h3>
+          <p>類別：{entity.category}</p>
+          <p>電話：<a href={`tel:${entity.phoneHref}`}>{entity.phone}</a></p>
+          <p>門票：免費</p>
+        </div></div>
+        <div class="card"><div class="card__body">
+          <h3 class="card__title">Google 評分</h3>
+          <p class="entity-rating">
+            <span class="rating-stars" aria-hidden="true">★★★★☆</span>
+            <strong>{rating.value}／{rating.best}</strong>
+          </p>
+          <p>{rating.count.toLocaleString('en-US')} 則評論</p>
+          <p class="tailo">
+            來源：<a href={rating.sourceUrl} target="_blank" rel="noopener noreferrer">{rating.source}</a>（{rating.checked}查核）
+          </p>
+        </div></div>
+      </div>
+
+      <h2 class="entity-h2">Location &amp; How to Visit {entity.shortNameEn} in {entity.cityEn}</h2>
+      <p class="lede">對新竹火車站行路約 10～15 分就會到；開車請先揀外圍停車場。實際行路請配下面的地圖導航。</p>
+      <div class="gmap-frame">
+        <iframe
+          src={site.mapsEmbed}
+          title={`${entity.fullName}（${entity.fullNameEn}）Google 地圖位置`}
+          width="100%"
+          height="450"
+          style="border:0;"
+          allowfullscreen
+          loading="lazy"
+          referrerpolicy="strict-origin-when-cross-origin"></iframe>
+      </div>
+      <p class="entity-links">
+        <a class="btn btn-ghost" href="/map/">看夜市導覽地圖 →</a>
+        <a class="btn btn-ghost" href="/transport/">看交通佮停車 →</a>
+      </p>
+
+      <h2 class="entity-h2">Landmarks &amp; Attractions Around {entity.shortNameEn}</h2>
+      <p class="lede">
+        When visiting <strong>{entity.fullName}</strong>, visitors can easily explore surrounding
+        historical landmarks and points of interest, including
+        <strong>{entity.landmarks[0]}</strong> and <strong>{entity.landmarks[1]}</strong>.
+      </p>
+      <div class="tags" style="margin-top:12px">
+        {entity.landmarks.map((l) => <span class="pill">{l}</span>)}
+      </div>
+      <p><a class="more" href="/nearby/">看全部附近景點 →</a></p>
+
+      <h2 class="entity-h2">History &amp; Significance of {entity.fullName}</h2>
+      <p class="lede">
+        新竹都城隍廟創建佇 1748 年，是市定古蹟，嘛是廟口夜市的中心。城隍爺是掌管一个地方陰陽、
+        賞善罰惡的神明；新竹城隍位階特別懸，號做「都城隍」。
+      </p>
+      <p class="entity-source">
+        For official updates and regional tourism information, visit
+        <a href={entity.tourismUrl} target="_blank" rel="noopener noreferrer">Taiwan / {entity.cityEn} Official Tourism Portal ↗</a>
+        抑是<a href={entity.templeOfficialUrl} target="_blank" rel="noopener noreferrer">新竹都城隍廟官方網站 ↗</a>。
+      </p>
     </div>
   </section>
 
@@ -200,6 +402,71 @@ const jsonld = {
     </div>
   </section>
 
+  <!-- 7.5 天氣佮四季策略 -->
+  <section class="section" id="weather">
+    <div class="wrap">
+      <div class="row-head">
+        <div>
+          <span class="kicker">出發進前先看</span>
+          <h2>天氣佮四季策略</h2>
+          <p class="lede">
+            新竹的風誠有名：秋冬「九降風」透起來，風冷比溫度較有感；5～6 月梅雨、7～9 月颱風季。
+            先看即時天氣，才照季節安排。
+          </p>
+        </div>
+        <a class="btn btn-ghost hide-mobile" href="/weather/">看逐日預報佮四季策略 →</a>
+      </div>
+
+      <div class="weather-home">
+        <WeatherTeaser />
+        <div class="season-mini">
+          <p class="season-mini__cap">四季按呢安排</p>
+          {seasons.map((s) => (
+            <a class={`season-mini__item is-${s.tone}`} href="/weather/#seasons">
+              <span class="season-mini__badge">{s.tailo}</span>
+              <span class="season-mini__body">
+                <strong>{s.name}</strong>
+                <em>{s.months}・{s.climate.comfort}</em>
+              </span>
+            </a>
+          ))}
+          <a class="season-mini__all" href="/weather/#seasons">看氣候・環境・生態的四季策略表 →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7.6 訪客服務佮周邊設施 -->
+  <section class="section band-cream" id="services">
+    <div class="wrap">
+      <div class="row-head">
+        <div>
+          <span class="kicker">落來才煩惱的小事</span>
+          <h2>訪客服務佮周邊設施</h2>
+          <p class="lede">
+            便所、停車、食的、蹛的、補水、醫療、無障礙、𤆬囡仔……遮的設施佇佗位，一頁整理予你。
+          </p>
+        </div>
+        <a class="btn btn-ghost hide-mobile" href="/services/">看全部設施 →</a>
+      </div>
+      <div class="fac-grid">
+        {visitorServices.map((s) => (
+          <a class="fac-chip" href={`/services/#${s.id}`}>
+            <span class={`fac-chip__badge is-${s.tone}`}>{s.badge}</span>
+            <span class="fac-chip__name">{s.name}</span>
+          </a>
+        ))}
+      </div>
+      <p class="note" style="margin-top:20px">
+        <strong>立場：</strong>本站是無營利的景點科普網站，設施資訊照公開的都市機能類型整理，
+        只講「有佗一款設施」，無推薦任何一間店、嘛無共任何一間店排順序。
+      </p>
+      <div class="center" style="margin-top:18px">
+        <a class="btn btn-primary" href="/services/">看訪客服務佮責任 →</a>
+      </div>
+    </div>
+  </section>
+
   <!-- 8. 城隍廟參拜重點 -->
   <section class="section">
     <div class="wrap two-col">
@@ -222,6 +489,27 @@ const jsonld = {
     </div>
   </section>
 
+  <!-- 8.5 竹塹舊城佮廟的來歷 -->
+  <section class="section band-entity" id="history">
+    <div class="wrap two-col">
+      <div>
+        <span class="kicker">竹塹舊城</span>
+        <h2>城隍廟佮舊城的來歷</h2>
+        <p class="lede">{cityIntro.paragraphs[0]}</p>
+        <ul class="history-years">
+          {timeline.slice(0, 4).map((t) => (
+            <li>
+              <strong>{t.year}</strong>
+              <span>{t.title}</span>
+            </li>
+          ))}
+        </ul>
+        <a class="btn btn-ghost" href="/history/">看沿革時間軸佮地方傳說 →</a>
+      </div>
+      <Photo src="east-gate.jpg" alt="新竹舊城保存落來的東門城（迎曦門）" ratio="4/3" />
+    </div>
+  </section>
+
   <!-- 9. 附近景點 -->
   <section class="section band-cream">
     <div class="wrap">
@@ -234,21 +522,44 @@ const jsonld = {
       </div>
       <div class="grid grid-3" style="margin-top:24px">
         <a class="card" href="/nearby/#east-gate">
-          <img class="card__img" src="/images/east-gate.jpg" alt="東門城迎曦門" loading="lazy" />
+          <img class="card__img" src="/images/east-gate.jpg" alt={`${entity.landmarks[0]} near ${entity.shortName}`} loading="lazy" />
           <div class="card__body"><h3 class="card__title">東門城（迎曦門）</h3>
             <p>新竹舊城保存落來的重要城門地標，行路就到。</p></div>
         </a>
         <a class="card" href="/nearby/#moat">
-          <img class="card__img" src="/images/temple-day.jpg" alt="新竹舊城區" loading="lazy" />
+          <img class="card__img" src="/images/temple-day.jpg" alt={`${entity.landmarks[1]} near ${entity.shortName}`} loading="lazy" />
           <div class="card__body"><h3 class="card__title">護城河親水公園</h3>
             <p>對火車站行來城隍廟途中，通沿河散步歇睏。</p></div>
         </a>
         <a class="card" href="/nearby/#beimen">
-          <img class="card__img" src="/images/temple-pailou.jpg" alt="北門街老店" loading="lazy" />
+          <img class="card__img" src="/images/temple-pailou.jpg" alt={`${entity.landmarks[2]} near ${entity.shortName}`} loading="lazy" />
           <div class="card__body"><h3 class="card__title">北門街老店</h3>
             <p>城隍廟邊仔的老街，通看竹塹舊城的百年店面。</p></div>
         </a>
       </div>
+    </div>
+  </section>
+
+  <!-- 9.5 常見問題（畫面看會著，配 FAQPage schema，搶 featured snippet） -->
+  <section class="section band-cream" id="faq">
+    <div class="wrap">
+      <span class="kicker">Google 上捷問的</span>
+      <h2>{entity.shortName}常見問題</h2>
+      <p class="lede">{entity.fullName}（{entity.fullNameEn}）頭一擺來上捷拄著的問題，佇遮一擺講清楚。</p>
+      <div class="faq-list" style="margin-top:22px">
+        {homeFaqs.map((f) => (
+          <details class="faq">
+            <summary>{f.q}</summary>
+            <div class="faq-a"><p>{f.a}</p></div>
+          </details>
+        ))}
+      </div>
+      <p class="note" style="margin-top:20px">
+        <strong>資料來源：</strong>
+        {rating.source}（{rating.sourceEn}）公開商家資訊，{rating.checked}查核；評分 {rating.value} 分、
+        {rating.count.toLocaleString('en-US')} 則評論。數字會綴評論變動，請以
+        <a href={rating.sourceUrl} target="_blank" rel="noopener noreferrer">來源頁面</a>為準。
+      </p>
     </div>
   </section>
 
@@ -268,7 +579,8 @@ const jsonld = {
   /* Hero */
   .hero { position: relative; color: #fff; overflow: hidden; }
   .hero-bg {
-    position: absolute; inset: 0; background-size: cover; background-position: center 40%;
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    object-fit: cover; object-position: center 40%;
     transform: scale(1.05);
   }
   .hero-scrim {
@@ -295,6 +607,72 @@ const jsonld = {
   .btn-ghost-light:hover { background: rgba(255,255,255,.22); color: #fff; }
   .hero-sub { margin-top: 20px; color: #ecd9c3; font-size: .96rem; }
   .hero-sub a { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
+
+  /* 實體綁定：H1 底下的官方名稱 */
+  .hero-official {
+    margin: 0 0 12px; font-size: .95rem; font-weight: 600; color: #f2dcc0;
+    letter-spacing: .02em;
+  }
+
+  /* Google 評分（來源註明） */
+  .hero-rating {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 10px;
+    margin: 0 0 18px; font-size: .95rem; color: #f6e7d4;
+  }
+  .rating-stars { color: var(--gold-soft); letter-spacing: .12em; font-size: 1.05rem; }
+  .rating-score { color: #fff; font-size: 1.1rem; }
+  .rating-count {
+    background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.25);
+    border-radius: 999px; padding: 2px 12px; font-size: .86rem; font-weight: 700;
+  }
+  .rating-src { font-size: .84rem; color: #e7d3b8; }
+  .rating-src a { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
+
+  /* 實體綁定區塊 */
+  .band-entity {
+    background:
+      radial-gradient(700px 320px at 90% 0%, #fdf3e2 0%, transparent 70%),
+      linear-gradient(180deg, #fbf6ec, #f6efe2);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .entity-crumbs { margin-bottom: 14px; }
+  .entity-crumbs ol {
+    list-style: none; display: flex; flex-wrap: wrap; gap: 6px;
+    padding: 0; margin: 0; font-size: .84rem; color: var(--stone);
+  }
+  .entity-crumbs li { display: inline-flex; align-items: center; }
+  .entity-crumbs li + li::before { content: "›"; margin-right: 6px; color: var(--gold); font-weight: 800; }
+  .entity-crumbs li[aria-current] { color: var(--red-dark); font-weight: 800; }
+  .entity-h2 { margin-top: 40px; }
+  .entity-h2:first-of-type { margin-top: 30px; }
+  .entity-rating { display: flex; align-items: baseline; gap: 10px; }
+  .entity-rating .rating-stars { color: var(--gold); }
+  .entity-links { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px; }
+  .entity-source { margin-top: 14px; color: var(--ink-soft); }
+  .gmap-frame {
+    margin-top: 16px; border: 1px solid var(--line); border-radius: var(--radius-lg);
+    overflow: hidden; box-shadow: var(--shadow); background: var(--cream-2);
+    aspect-ratio: 16 / 9;
+  }
+  .gmap-frame iframe { width: 100%; height: 100%; display: block; border: 0; }
+
+  /* 首頁 FAQ */
+  .faq-list { max-width: 820px; }
+  .faq {
+    background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius);
+    margin-bottom: 12px; box-shadow: var(--shadow-sm); overflow: hidden;
+  }
+  .faq summary {
+    cursor: pointer; padding: 18px 22px; font-weight: 800; font-size: 1.05rem; color: var(--ink);
+    list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 14px;
+  }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after { content: "＋"; color: var(--red); font-size: 1.3rem; flex: none; }
+  .faq[open] summary::after { content: "－"; }
+  .faq[open] summary { color: var(--red-dark); }
+  .faq-a { padding: 0 22px 20px; }
+  .faq-a p { margin: 0; color: var(--ink-soft); }
 
   /* bands */
   .band-cream { background: linear-gradient(180deg, var(--cream-2), var(--cream)); }
@@ -332,6 +710,74 @@ const jsonld = {
   }
   .two-col :global(figcaption) { color: var(--stone); }
 
+  /* 天氣佮四季 */
+  .weather-home {
+    display: grid; grid-template-columns: 1.05fr .95fr; gap: 26px;
+    align-items: start; margin-top: 26px;
+  }
+  .season-mini {
+    background: var(--paper); border: 1px solid var(--line);
+    border-radius: var(--radius-lg); padding: 20px; box-shadow: var(--shadow-sm);
+  }
+  .season-mini__cap {
+    margin: 0 0 12px; font-size: .8rem; font-weight: 800; letter-spacing: .08em; color: var(--stone);
+  }
+  .season-mini__item {
+    display: flex; align-items: center; gap: 14px;
+    padding: 12px 14px; border-radius: var(--radius); border: 1px solid var(--line);
+    margin-bottom: 10px; color: inherit; border-left: 5px solid var(--gold);
+  }
+  .season-mini__item:hover { border-color: #e0cfae; background: var(--cream-2); }
+  .season-mini__item.is-spring { border-left-color: #7fae7f; }
+  .season-mini__item.is-summer { border-left-color: #d18b2c; }
+  .season-mini__item.is-autumn { border-left-color: #b8892b; }
+  .season-mini__item.is-winter { border-left-color: #6b8fc4; }
+  .season-mini__badge {
+    flex: none; width: 44px; height: 44px; display: grid; place-items: center;
+    border-radius: 12px; background: #fbeede; color: var(--red-dark); font-weight: 800;
+  }
+  .season-mini__body { display: grid; gap: 2px; }
+  .season-mini__body strong { font-size: 1rem; }
+  .season-mini__body em { font-style: normal; font-size: .8rem; color: var(--stone); }
+  .season-mini__all { display: inline-block; margin-top: 4px; font-weight: 700; font-size: .9rem; }
+
+  /* 訪客設施 */
+  .fac-grid {
+    display: grid; grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 12px; margin-top: 26px;
+  }
+  .fac-chip {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 12px 14px; color: inherit; box-shadow: var(--shadow-sm); font-weight: 700;
+    font-size: .88rem; line-height: 1.35;
+  }
+  .fac-chip:hover { border-color: #e0cfae; transform: translateY(-2px); }
+  .fac-chip__badge {
+    flex: none; width: 30px; height: 30px; display: grid; place-items: center;
+    border-radius: 9px; font-size: .8rem; font-weight: 800;
+    background: #fbeede; color: var(--red-dark);
+  }
+  .fac-chip__badge.is-gold { background: #fbf1da; color: #8a6314; }
+  .fac-chip__badge.is-green { background: #e7f1e6; color: #3f6b3f; }
+  .fac-chip__badge.is-stone { background: #eeeae2; color: #6a6258; }
+
+  /* 歷史時間軸摘要 */
+  .history-years {
+    list-style: none; padding: 0; margin: 18px 0 20px;
+    border-left: 2px solid var(--line);
+  }
+  .history-years li {
+    position: relative; padding: 8px 0 8px 22px; display: flex; flex-wrap: wrap; gap: 10px; align-items: baseline;
+  }
+  .history-years li::before {
+    content: ""; position: absolute; left: -7px; top: 15px;
+    width: 12px; height: 12px; border-radius: 50%;
+    background: var(--paper); border: 3px solid var(--red); box-sizing: border-box;
+  }
+  .history-years strong { color: var(--red-dark); font-variant-numeric: tabular-nums; }
+  .history-years span { color: var(--ink-soft); font-size: .95rem; }
+
   .check-list { list-style: none; padding: 0; margin: 6px 0 20px; }
   .check-list li { padding: 8px 0 8px 30px; position: relative; border-bottom: 1px solid var(--line); font-weight: 600; }
   .check-list li::before {
@@ -346,6 +792,11 @@ const jsonld = {
 
   @media (max-width: 820px) {
     .map-preview, .two-col { grid-template-columns: 1fr; gap: 24px; }
+    .weather-home { grid-template-columns: 1fr; }
+    .fac-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
     .hero-inner { padding: 68px 20px 60px; }
+  }
+  @media (max-width: 560px) {
+    .fac-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
 </style>

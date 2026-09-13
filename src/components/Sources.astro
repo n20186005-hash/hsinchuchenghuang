@@ -1,0 +1,47 @@
+---
+import { sources, entity, site } from '../data/site.js';
+---
+<!-- 資料來源與延伸閱讀（SourcesSection，強化 E-E-A-T） -->
+<section class="section-tight sources" aria-labelledby="sources-title">
+  <div class="wrap">
+    <span class="kicker">資料來源</span>
+    <h2 id="sources-title" class="sources-title">資料來源佮延伸閱讀</h2>
+    <p class="sources-lede">
+      本站的營業資訊、交通、文化背景佮評分數字，攏整理自公開資料。落尾的評分佮評論數是引用
+      <strong>{entity.rating.source}</strong>（{entity.rating.sourceEn}）公開商家資訊，最後查核時間：
+      <time datetime={entity.rating.checkedIso}>{entity.rating.checked}</time>。數字會綴使用者評論變動，請以來源頁面為準。
+    </p>
+
+    <ul class="source-list">
+      {sources.map((s) => (
+        <li class="source-item">
+          <a class="source-link" href={s.url} target="_blank" rel="noopener noreferrer">
+            {s.label}<span aria-hidden="true"> ↗</span>
+          </a>
+          <p class="source-note">{s.note}</p>
+        </li>
+      ))}
+    </ul>
+
+    <p class="source-disclaimer">
+      {entity.fullName}（{entity.fullNameEn}）座落佇 {entity.city}{entity.district}{entity.streetAddress}。
+      本站是獨立旅遊資訊網站，內容會使有時間差；營業時間、價數、公休佮交通請以店家佮官方最新公告為準。
+    </p>
+  </div>
+</section>
+
+<style>
+  .sources { background: var(--cream-2); border-top: 1px solid var(--line); }
+  .sources-title { font-size: clamp(1.2rem, 2.4vw, 1.6rem); margin-bottom: 6px; }
+  .sources-lede { color: var(--ink-soft); max-width: 62em; font-size: .98rem; }
+  .source-list {
+    list-style: none; padding: 0; margin: 20px 0 0;
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px 28px;
+  }
+  .source-item { border-bottom: 1px solid var(--line); padding: 10px 0; }
+  .source-link { font-weight: 800; color: var(--red-dark); }
+  .source-link:hover { color: var(--red); text-decoration: underline; text-underline-offset: 3px; }
+  .source-note { margin: 4px 0 0; font-size: .86rem; color: var(--stone); }
+  .source-disclaimer { margin-top: 20px; font-size: .84rem; color: var(--stone); }
+  @media (max-width: 640px) { .source-list { grid-template-columns: 1fr; } }
+</style>

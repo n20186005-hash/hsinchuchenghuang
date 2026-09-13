@@ -1,0 +1,338 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import WeatherPanel from '../../components/WeatherPanel.astro';
+import { getWeather, WEATHER_SOURCE } from '../../lib/weather.js';
+import { climateNormals, climateMonths, seasons, quickRules } from '../../data/climate.js';
+import { site, entity } from '../../data/site.js';
+
+// 這頁佇伺服器端產生（Cloudflare Worker）：即時天氣資料干焦佇伺服器端提，
+// 前端收著的是已經正規化的結果，袂直接去連外部的氣象服務。
+export const prerender = false;
+
+const weather = await getWeather();
+
+const jsonld = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    '@id': `${site.url}/weather/#article`,
+    headline: `${entity.fullName}即時天氣佮四季遊憩策略`,
+    description: `新竹城隍廟夜市（${entity.city}${entity.district}）的即時天氣、未來 7 日預報、出行建議，以及按氣候、環境佮生態整理的四季遊憩策略。`,
+    inLanguage: 'nan-Hant-TW',
+    url: `${site.url}/weather/`,
+    image: [`${site.url}/images/temple-facade.jpg`, `${site.url}/images/temple-day.jpg`],
+    about: { '@id': `${site.url}/#attraction` },
+    isPartOf: { '@id': `${site.url}/#website` },
+    author: { '@id': `${site.url}/#organization` },
+    publisher: { '@id': `${site.url}/#organization` },
+    dateModified: weather?.updatedAtIso || undefined,
+    temporalCoverage: `${climateNormals.period}`,
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: quickRules.map((r) => ({
+      '@type': 'Question',
+      name: r.q,
+      acceptedAnswer: { '@type': 'Answer', text: r.a },
+    })),
+  },
+];
+---
+<Layout
+  title="即時天氣佮四季遊憩策略"
+  description="新竹城隍廟夜市即時天氣：現在狀況、未來 24 點鐘、未來 7 日預報、降雨佮風、紫外線、空氣品質，以及出行穿搭佮遊玩安排建議；閣附按氣候、環境佮生態整理的四季遊憩策略表。"
+  ogImage="/images/temple-day.jpg"
+  jsonld={jsonld}
+>
+  <section class="page-head">
+    <div class="wrap">
+      <p class="crumbs"><a href="/">頭頁</a> ／ 天氣佮四季策略</p>
+      <span class="kicker">出門進前先看</span>
+      <h1>即時天氣佮四季遊憩策略</h1>
+      <p class="lede">
+        新竹的風誠有名：秋冬「九降風」透起來，風冷比溫度較有感；5～6 月是梅雨，7～9 月是颱風季。
+        這頁有即時預報佮出行建議，閣有按氣候、環境佮生態整理的四季策略——欲安排一睏，看這頁就夠。
+      </p>
+    </div>
+  </section>
+
+  <!-- 伺服器端產生的即時天氣模組 -->
+  <section class="section">
+    <div class="wrap">
+      <WeatherPanel data={weather} />
+      <p class="note" style="margin-top:22px">
+        <strong>提醒：</strong>數值按官方開放預報資料整理，屬參考性質。颱風、豪雨、高溫這款的
+        <strong>官方警戒</strong>發布、停班停課佮活動停辦，請以
+        <a href="https://www.cwa.gov.tw/" target="_blank" rel="noopener noreferrer">中央氣象署</a>、
+        新竹市政府佮主辦單位的公告為準。
+      </p>
+    </div>
+  </section>
+
+  <!-- 四季遊憩策略表 -->
+  <section class="section band-cream" id="seasons">
+    <div class="wrap">
+      <span class="kicker">四季遊憩策略</span>
+      <h2>氣候、環境、生態——四个季節按怎安排</h2>
+      <p class="lede">
+        新竹測站長期平均（{climateNormals.period}）：年平均氣溫 {climateNormals.annualMeanTemp} °C，
+        年雨量約 {climateNormals.annualRainfall} 公釐、年雨日約 {climateNormals.annualRainDays} 日。
+        {climateNormals.note}
+      </p>
+      <p class="note" style="margin-top:16px">
+        這是<strong>長期氣候平均</strong>，毋是逐年預報；逐年會因為聖嬰、反聖嬰、颱風佮季風強弱無仝。
+        即時狀況請看頂懸的預報模組。
+      </p>
+
+      <div class="table-scroll" style="margin-top:24px">
+        <table class="season-table">
+          <caption>四季遊憩策略表（氣候／環境／生態）</caption>
+          <thead>
+            <tr>
+              <th scope="col">季節</th>
+              <th scope="col">氣候</th>
+              <th scope="col">環境（用水佮衛生）</th>
+              <th scope="col">生態觀察</th>
+            </tr>
+          </thead>
+          <tbody>
+            {seasons.map((s) => (
+              <tr class={`is-${s.tone}`}>
+                <th scope="row">
+                  <strong>{s.name}</strong>
+                  <em class="tailo">{s.tailo}</em>
+                  <span class="st-range">{s.months}</span>
+                </th>
+                <td>
+                  <p class="st-strong">{s.climate.temp}</p>
+                  <p>{s.climate.rain}</p>
+                  <p class="st-mute">{s.climate.feature}</p>
+                  <p class="st-tag">舒適度：{s.climate.comfort}</p>
+                </td>
+                <td>
+                  <p><strong>用水：</strong>{s.environment.water}</p>
+                  <p><strong>衛生：</strong>{s.environment.hygiene}</p>
+                  <p class="st-mute"><strong>空氣：</strong>{s.environment.air}</p>
+                </td>
+                <td>
+                  <p>{s.eco.highlight}</p>
+                  <p class="st-species">{s.eco.species.join('、')}</p>
+                  <p class="st-mute">{s.eco.note}</p>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- 逐季節的建議佮注意 -->
+  <section class="section">
+    <div class="wrap">
+      <span class="kicker">一款一款看</span>
+      <h2>逐季節的遊憩建議佮注意事項</h2>
+      <div class="season-cards">
+        {seasons.map((s) => (
+          <article class={`season-card is-${s.tone}`}>
+            <header class="season-card__head">
+              <span class="season-card__badge">{s.tailo}</span>
+              <div>
+                <h3>{s.name}</h3>
+                <em class="tailo">{s.months}</em>
+              </div>
+            </header>
+            <div class="season-card__cols">
+              <div>
+                <h4>按呢安排</h4>
+                <ul>
+                  {s.advice.map((a) => <li>{a}</li>)}
+                </ul>
+              </div>
+              <div>
+                <h4>愛注意</h4>
+                <ul class="is-caution">
+                  {s.caution.map((c) => <li>{c}</li>)}
+                </ul>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 逐月氣候平均 -->
+  <section class="section band-cream">
+    <div class="wrap">
+      <span class="kicker">逐月的數字</span>
+      <h2>逐月氣候平均</h2>
+      <p class="lede">
+        下面照{climateMonths.length}个月的長期平均概略整理，欲揀月份來𨑨迌，看這表就會使。
+      </p>
+      <div class="table-scroll" style="margin-top:24px">
+        <table class="month-table">
+          <caption>新竹測站逐月氣候平均（{climateNormals.period}）</caption>
+          <thead>
+            <tr>
+              <th scope="col">月份</th>
+              <th scope="col">月均溫</th>
+              <th scope="col">平均高溫</th>
+              <th scope="col">平均低溫</th>
+              <th scope="col">月雨量</th>
+              <th scope="col">雨日</th>
+              <th scope="col">紫外線</th>
+              <th scope="col">特徵</th>
+            </tr>
+          </thead>
+          <tbody>
+            {climateMonths.map((m) => (
+              <tr>
+                <th scope="row">{m.m}</th>
+                <td>{m.temp} °C</td>
+                <td>{m.high} °C</td>
+                <td>{m.low} °C</td>
+                <td>{m.rain} mm</td>
+                <td>{m.rainDays} 日</td>
+                <td>{m.uv}</td>
+                <td class="st-mute">{m.note}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- 出發進前的通則 -->
+  <section class="section">
+    <div class="wrap">
+      <span class="kicker">免看預報就會使的判斷</span>
+      <h2>出發進前的通則</h2>
+      <div class="faq-list">
+        {quickRules.map((r) => (
+          <details class="faq">
+            <summary>{r.q}</summary>
+            <div class="faq-a"><p>{r.a}</p></div>
+          </details>
+        ))}
+      </div>
+      <p class="note" style="margin-top:24px">
+        <strong>延伸：</strong>
+        想看訪客設施佮責任，去<a href="/services/">訪客服務佮周邊設施</a>；
+        想看舊城佮廟的來歷，去<a href="/history/">竹塹舊城佮城隍廟的來歷</a>；
+        想看按時間揀路線，去<a href="/routes/">𨑨迌路線</a>。
+      </p>
+    </div>
+  </section>
+
+  <section class="section band-red">
+    <div class="wrap center">
+      <h2 class="light">天氣看好，路線揀好，出發</h2>
+      <p class="light-lede" style="margin-inline:auto">
+        照季節佮天氣揀一條路線，配夜市地圖邊行邊食。
+      </p>
+      <div class="center-cta">
+        <a class="btn btn-gold" href="/routes/">看𨑨迌路線 →</a>
+        <a class="btn btn-ghost btn-ghost-light" href="/map/">看夜市地圖 →</a>
+      </div>
+      <p class="wx-note-src">氣象資料來源：{WEATHER_SOURCE.label}。</p>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .band-cream { background: linear-gradient(180deg, var(--cream-2), var(--cream)); }
+  .band-red { background: linear-gradient(160deg, var(--red), var(--red-dark)); color: #fff; }
+  .band-red .light { color: #fff; }
+  .light-lede { color: #f4d9c9; }
+  .center-cta { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 16px; }
+  .wx-note-src { margin: 20px 0 0; font-size: .78rem; color: #e7cdb0; }
+
+  /* 表格 */
+  .table-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: var(--paper); }
+  table { border-collapse: collapse; width: 100%; min-width: 860px; }
+  caption {
+    text-align: left; padding: 14px 18px; font-size: .84rem; font-weight: 800;
+    letter-spacing: .06em; color: var(--stone); border-bottom: 1px solid var(--line);
+  }
+  th, td { text-align: left; vertical-align: top; padding: 14px 18px; border-bottom: 1px solid var(--line); }
+  thead th {
+    background: var(--cream-2); font-size: .82rem; letter-spacing: .06em;
+    color: var(--red-dark); white-space: nowrap;
+  }
+  tbody tr:last-child th, tbody tr:last-child td { border-bottom: 0; }
+  tbody th { white-space: nowrap; }
+  td p { margin: 0 0 8px; font-size: .9rem; line-height: 1.7; color: var(--ink-soft); }
+  td p:last-child { margin-bottom: 0; }
+
+  .season-table tbody tr.is-spring { border-left: 4px solid #7fae7f; }
+  .season-table tbody tr.is-summer { border-left: 4px solid #d18b2c; }
+  .season-table tbody tr.is-autumn { border-left: 4px solid #b8892b; }
+  .season-table tbody tr.is-winter { border-left: 4px solid #6b8fc4; }
+  .season-table tbody th strong { display: block; font-size: 1.05rem; color: var(--red-dark); }
+  .st-range { display: block; margin-top: 4px; font-size: .76rem; color: var(--stone); font-weight: 500; }
+  .st-strong { font-weight: 700; color: var(--ink) !important; }
+  .st-mute { color: var(--stone) !important; font-size: .84rem !important; }
+  .st-tag {
+    display: inline-block; margin-top: 4px; padding: 2px 10px; border-radius: 999px;
+    background: #fbf1da; color: #8a6314 !important; font-size: .78rem !important; font-weight: 700;
+  }
+  .st-species {
+    padding: 6px 10px; border-radius: 8px; background: var(--cream-2);
+    font-size: .82rem !important; color: var(--ink-soft) !important;
+  }
+  .month-table tbody th { font-variant-numeric: tabular-nums; color: var(--red-dark); }
+  .month-table td { font-size: .88rem; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+
+  /* 季節卡片 */
+  .season-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; margin-top: 26px; }
+  .season-card {
+    background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-lg);
+    padding: 22px 24px; box-shadow: var(--shadow-sm); border-top: 5px solid var(--gold);
+  }
+  .season-card.is-spring { border-top-color: #7fae7f; }
+  .season-card.is-summer { border-top-color: #d18b2c; }
+  .season-card.is-autumn { border-top-color: #b8892b; }
+  .season-card.is-winter { border-top-color: #6b8fc4; }
+  .season-card__head { display: flex; align-items: center; gap: 14px; }
+  .season-card__badge {
+    flex: none; width: 52px; height: 52px; display: grid; place-items: center;
+    border-radius: 14px; background: #fbeede; color: var(--red-dark);
+    font-weight: 800; font-size: 1.1rem;
+  }
+  .season-card__head h3 { margin: 0; font-size: 1.15rem; }
+  .season-card__cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; margin-top: 16px; }
+  .season-card__cols h4 {
+    margin: 0 0 8px; font-size: .8rem; letter-spacing: .06em; color: var(--stone); font-weight: 800;
+  }
+  .season-card__cols ul { margin: 0; padding-left: 1.1em; display: grid; gap: 6px; }
+  .season-card__cols li { font-size: .9rem; line-height: 1.7; color: var(--ink-soft); }
+  .season-card__cols ul.is-caution li { color: var(--red-dark); }
+
+  /* FAQ */
+  .faq-list { margin-top: 22px; max-width: 860px; }
+  .faq {
+    background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius);
+    margin-bottom: 12px; box-shadow: var(--shadow-sm); overflow: hidden;
+  }
+  .faq summary {
+    cursor: pointer; padding: 18px 22px; font-weight: 800; font-size: 1.03rem;
+    list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 14px;
+  }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after { content: "＋"; color: var(--red); font-size: 1.3rem; flex: none; }
+  .faq[open] summary::after { content: "－"; }
+  .faq[open] summary { color: var(--red-dark); }
+  .faq-a { padding: 0 22px 20px; }
+  .faq-a p { margin: 0; color: var(--ink-soft); }
+
+  @media (max-width: 860px) {
+    .season-cards { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 560px) {
+    .season-card__cols { grid-template-columns: 1fr; gap: 14px; }
+    th, td { padding: 12px 14px; }
+  }
+</style>

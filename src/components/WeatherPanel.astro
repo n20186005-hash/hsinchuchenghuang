@@ -1,0 +1,559 @@
+---
+import WeatherIcon from './WeatherIcon.astro';
+import { WEATHER_SOURCE } from '../lib/weather.js';
+
+const { data, compact = false } = Astro.props;
+
+const ok = data?.ok;
+const current = data?.current;
+const daily = data?.daily ?? [];
+const hourly = data?.hourly ?? [];
+const air = data?.air;
+const advice = data?.advice ?? null;
+const headline = advice?.headline;
+const risk = advice?.risk ?? [];
+const metrics = advice?.metrics ?? {};
+
+const tabs = [
+  { id: 'dress', label: '出行穿搭', items: (advice?.dress ?? []).map((x) => ({ title: x.title, text: x.text })) },
+  { id: 'plan', label: '遊玩安排', items: (advice?.plan ?? []).map((x) => ({ title: x.title, text: x.text })) },
+];
+
+const pack = advice?.pack ?? [];
+const scenes = advice?.scenes ?? [];
+
+const allMin = daily.length ? Math.min(...daily.map((d) => d.tMin ?? 99)) : 0;
+const allMax = daily.length ? Math.max(...daily.map((d) => d.tMax ?? -99)) : 1;
+const span = allMax - allMin || 1;
+const barStyle = (d) => {
+  const left = (((d.tMin ?? allMin) - allMin) / span) * 100;
+  const width = Math.max(6, (((d.tMax ?? allMin) - (d.tMin ?? allMin)) / span) * 100);
+  return `left:${left.toFixed(1)}%;width:${width.toFixed(1)}%`;
+};
+const r0 = (v) => (v === null || v === undefined ? '—' : Math.round(v));
+const p0 = (v) => (v === null || v === undefined ? '—' : `${Math.round(v)}%`);
+---
+
+{
+  !ok ? (
+    <div class="wx wx-empty">
+      <p class="wx-empty-title">氣象資料這馬提無著</p>
+      <p>
+        可能是連線暫時無穩。過一時仔重新整理就會當看著；出發進前嘛會使直接看
+        <a href="https://www.cwa.gov.tw/" target="_blank" rel="noopener noreferrer">中央氣象署</a>
+        的即時資訊。
+      </p>
+    </div>
+  ) : (
+    <div class={`wx ${compact ? 'wx--compact' : ''}`} data-wx-tabs>
+      <header class="wx-top">
+        <div>
+          <span class="kicker">即時天氣</span>
+          <h3>新竹市北區・城隍廟夜市一帶</h3>
+        </div>
+        <p class="wx-updated">
+          {data.stale && <span class="wx-stale">連線較慢・顯示最近一筆</span>}
+          更新 {data.updatedLabel}
+        </p>
+      </header>
+
+      {/* 風險提醒：有才顯示，優先度上懸 */}
+      {risk.length > 0 && (
+        <section class="wx-risk">
+          <h4 class="wx-risk__head">風險提醒</h4>
+          <ul>
+            {risk.map((r) => (
+              <li class={`wx-risk__item is-${r.tone}`}>
+                <span class="wx-risk__icon">{r.icon}</span>
+                <div>
+                  <strong>{r.title}</strong>
+                  <p>{r.text}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {/* 一句話結論 */}
+      {headline && (
+        <p class={`wx-headline is-${headline.tone}`}>
+          <span class="wx-headline__tag">今仔日一句話</span>
+          {headline.text}
+        </p>
+      )}
+
+      <div class="wx-now">
+        <div class="wx-now-main">
+          <WeatherIcon icon={current.icon} size={58} />
+          <div class="wx-now-text">
+            <p class="wx-temp">{r0(current.temp)}<span>°C</span></p>
+            <p class="wx-desc">{current.desc}</p>
+            <p class="wx-feels">體感 {r0(current.feels)} °C</p>
+          </div>
+        </div>
+
+        <ul class="wx-metrics">
+          <li><span>天氣</span><strong>{current.desc}</strong></li>
+          <li><span>溫度</span><strong>{r0(daily[0]?.tMin)}～{r0(daily[0]?.tMax)} °C</strong></li>
+          <li><span>降雨機率</span><strong>{p0(metrics.peakProb ?? current.precipProb)}</strong></li>
+          <li><span>風</span><strong>{metrics.windLevelText || current.windText || '—'}</strong></li>
+          <li><span>紫外線</span><strong>{metrics.uv ? `${metrics.uv.label} ${metrics.uv.value}` : '—'}</strong></li>
+          <li><span>濕度</span><strong>{metrics.humidityText || (current.humidity != null ? `${r0(current.humidity)}%` : '—')}</strong></li>
+        </ul>
+      </div>
+
+      {/* 出行建議：分三塊標籤 */}
+      <section class="wx-tabwrap">
+        <div class="wx-tabs" role="tablist" aria-label="出行建議分類">
+          {tabs.map((t, i) => (
+            <button
+              type="button"
+              class={`wx-tab ${i === 0 ? 'is-on' : ''}`}
+              data-wx-tab={t.id}
+              role="tab"
+              aria-selected={i === 0 ? 'true' : 'false'}
+            >
+              {t.label}
+            </button>
+          ))}
+          <button type="button" class="wx-tab" data-wx-tab="pack" role="tab" aria-selected="false">
+            隨身物品<span class="wx-tab__num">{pack.length}</span>
+          </button>
+        </div>
+
+        {tabs.map((t, i) => (
+          <div class={`wx-pane ${i === 0 ? 'is-on' : ''}`} data-wx-pane={t.id} role="tabpanel">
+            <h4 class="wx-pane__title">{t.label}</h4>
+            {t.items.length === 0 ? (
+              <p class="wx-pane__none">今仔日無特別需要提醒的代誌。</p>
+            ) : (
+              <ul class="wx-adv-list">
+                {t.items.map((it) => (
+                  <li>
+                    <strong>{it.title}</strong>
+                    <p>{it.text}</p>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        ))}
+
+        <div class="wx-pane" data-wx-pane="pack" role="tabpanel">
+          <h4 class="wx-pane__title">隨身物品</h4>
+          {pack.length === 0 ? (
+            <p class="wx-pane__none">按照一般的準備就好。</p>
+          ) : (
+            <ul class="wx-pack">
+              {pack.map((p) => (
+                <li>
+                  <strong>{p.label}</strong>
+                  <em>{p.why}</em>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </section>
+
+      {/* 場景判斷 */}
+      {scenes.length > 0 && (
+        <section class="wx-block">
+          <h4>今仔日各場景按怎去</h4>
+          <p class="wx-scene-lead">
+            市區是主場，毋過真濟人會順紲去山仔抑海邊。逐款場景的條件無仝，分開看較準。
+          </p>
+          <div class="wx-scenes">
+            {scenes.map((s) => (
+              <article class={`wx-scene is-${s.level}`}>
+                <header>
+                  <span class="wx-scene__badge">{s.badge}</span>
+                  <div>
+                    <h5>{s.name}</h5>
+                    <em class="wx-scene__tailo">{s.tailo}</em>
+                  </div>
+                  <span class="wx-scene__level">{s.levelLabel}</span>
+                </header>
+                <p class="wx-scene__places">{s.places}</p>
+                <p class="wx-scene__text">{s.text}</p>
+                {s.tips.length > 0 && (
+                  <ul class="wx-scene__tips">
+                    {s.tips.map((t) => <li>{t}</li>)}
+                  </ul>
+                )}
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {hourly.length > 0 && (
+        <section class="wx-block">
+          <h4>未來 24 點鐘</h4>
+          <div class="wx-hours">
+            {hourly.slice(0, 24).map((h) => (
+              <div class="wx-hour">
+                <span class="wx-hour-time">{h.hourLabel}</span>
+                <WeatherIcon icon={h.icon} size={22} />
+                <strong>{r0(h.temp)}°</strong>
+                <span class="wx-hour-pop">
+                  <i style={`height:${Math.max(3, (h.precipProb ?? 0) * 0.36)}px`} />
+                  <em>{h.precipProb ?? 0}%</em>
+                </span>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {(data.today?.sunrise || data.today?.sunset) && (
+        <p class="wx-sun">
+          日頭出來 {data.today?.sunrise}・日頭落山 {data.today?.sunset}
+          {metrics.diurnal != null && `・日夜溫差約 ${Math.round(metrics.diurnal)} °C`}
+          {metrics.rainSum != null && metrics.rainSum > 0 && `・今仔日雨量約 ${Math.round(metrics.rainSum)} 公釐`}
+        </p>
+      )}
+
+      {daily.length > 0 && (
+        <section class="wx-block">
+          <h4>未來 7 日預報</h4>
+          <ul class="wx-days">
+            {daily.map((d) => (
+              <li class="wx-day">
+                <span class="wx-day-name">
+                  {d.isToday ? '今仔日' : d.weekday}
+                  <em>{d.dateShort}</em>
+                </span>
+                <WeatherIcon icon={d.icon} size={24} />
+                <span class="wx-day-desc">{d.desc}</span>
+                <span class="wx-day-pop">{d.precipProbMax ?? 0}%</span>
+                <span class="wx-day-range">
+                  <em>{r0(d.tMin)}°</em>
+                  <i><b style={barStyle(d)} /></i>
+                  <strong>{r0(d.tMax)}°</strong>
+                </span>
+                <span class="wx-day-uv">UV {r0(d.uvMax)}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {air && (
+        <section class="wx-air">
+          <h4>空氣品質</h4>
+          <p class={`wx-aqi is-${air.level.tone}`}>
+            <strong>AQI {air.aqi}</strong>
+            <span>{air.level.label}</span>
+          </p>
+          <p class="wx-air-sub">
+            PM2.5 {r0(air.pm25)} μg/m³・PM10 {r0(air.pm10)} μg/m³
+          </p>
+        </section>
+      )}
+
+      {data.marine?.tide?.events?.length > 0 && (
+        <section class="wx-air">
+          <h4>海岸的潮汐（{data.coast?.name}）</h4>
+          <ul class="wx-tide">
+            {data.marine.tide.events.map((e) => (
+              <li class={`is-${e.type}`}>
+                <span>{e.label}</span>
+                <strong>{e.time}</strong>
+              </li>
+            ))}
+          </ul>
+          <p class="wx-air-sub">
+            {data.marine.waveHeight != null && `浪高 ${data.marine.waveHeight.toFixed(1)} 公尺・`}
+            {data.marine.seaTemp != null && `海水 ${Math.round(data.marine.seaTemp)} °C・`}
+            逐點鐘的序列推算，時間的誤差大約半點鐘。
+          </p>
+        </section>
+      )}
+
+      <p class="wx-src">
+        氣象資料：{WEATHER_SOURCE.label}。數值按官方開放預報資料整理，屬參考性質。
+        颱風、豪雨、高溫這款<strong>官方警戒</strong>的發布、停班停課佮活動停辦，
+        請以<a href="https://www.cwa.gov.tw/" target="_blank" rel="noopener noreferrer">中央氣象署</a>、
+        新竹市政府佮主辦單位的公告為準。
+      </p>
+    </div>
+  )
+}
+
+<script>
+  // 出行建議的三塊標籤：有 JS 才收合，無 JS 的時陣三塊攏看會著
+  document.querySelectorAll('[data-wx-tabs]').forEach((root) => {
+    const tabs = Array.from(root.querySelectorAll('[data-wx-tab]'));
+    const panes = Array.from(root.querySelectorAll('[data-wx-pane]'));
+    if (!tabs.length || !panes.length) return;
+
+    root.classList.add('is-js');
+
+    const show = (id) => {
+      tabs.forEach((t) => {
+        const on = t.dataset.wxTab === id;
+        t.classList.toggle('is-on', on);
+        t.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+      panes.forEach((p) => p.classList.toggle('is-on', p.dataset.wxPane === id));
+    };
+
+    tabs.forEach((t) => {
+      t.addEventListener('click', () => show(t.dataset.wxTab));
+      t.addEventListener('keydown', (e) => {
+        if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+        e.preventDefault();
+        const i = tabs.indexOf(t);
+        const next = tabs[(i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length];
+        next.focus();
+        show(next.dataset.wxTab);
+      });
+    });
+
+    show(tabs[0].dataset.wxTab);
+  });
+</script>
+
+<style>
+  .wx {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    box-shadow: var(--shadow);
+  }
+  .wx-empty { text-align: center; }
+  .wx-empty-title { font-weight: 800; font-size: 1.05rem; color: var(--red-dark); margin: 0 0 8px; }
+
+  .wx-top {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding-bottom: 16px;
+    border-bottom: 1px dashed var(--line);
+  }
+  .wx-top h3 { margin: 6px 0 0; font-size: 1.25rem; }
+  .wx-updated { margin: 0; font-size: .84rem; color: var(--stone); }
+  .wx-stale {
+    display: inline-block; margin-right: 6px; padding: 2px 8px; border-radius: 999px;
+    background: #fbeede; color: var(--red-dark); font-weight: 700;
+  }
+
+  /* 風險提醒 */
+  .wx-risk { margin-top: 18px; border: 1px solid #f0cfcb; border-radius: 14px; overflow: hidden; }
+  .wx-risk__head {
+    margin: 0; padding: 10px 18px; font-size: .86rem; letter-spacing: .08em;
+    background: #fdf0ef; color: var(--red-dark); font-weight: 800;
+  }
+  .wx-risk ul { list-style: none; margin: 0; padding: 0; }
+  .wx-risk__item {
+    display: flex; gap: 14px; padding: 14px 18px; align-items: flex-start;
+    background: #fffaf9; border-top: 1px solid #f6e2df;
+  }
+  .wx-risk__item.is-warn { background: #fffcf4; border-top-color: #f2e5cd; }
+  .wx-risk__icon {
+    flex: none; width: 34px; height: 34px; display: grid; place-items: center;
+    border-radius: 10px; background: var(--red); color: #fff; font-weight: 800; font-size: .9rem;
+  }
+  .wx-risk__item.is-warn .wx-risk__icon { background: #d18b2c; }
+  .wx-risk__item strong { font-size: .98rem; color: var(--red-dark); }
+  .wx-risk__item p { margin: 4px 0 0; font-size: .9rem; line-height: 1.75; color: var(--ink-soft); }
+
+  /* 一句話結論 */
+  .wx-headline {
+    display: flex; flex-wrap: wrap; gap: 10px; align-items: baseline;
+    margin: 18px 0 0; padding: 14px 18px; border-radius: 12px;
+    background: #f4f7f4; border-left: 5px solid #3f8f5f;
+    font-size: 1.02rem; font-weight: 700; color: var(--ink);
+  }
+  .wx-headline.is-warn { background: #fdf7ec; border-left-color: var(--gold); }
+  .wx-headline.is-alert { background: #fdf0ef; border-left-color: var(--red); color: var(--red-dark); }
+  .wx-headline__tag {
+    font-size: .72rem; font-weight: 800; letter-spacing: .08em;
+    padding: 3px 9px; border-radius: 999px; background: rgba(0, 0, 0, .06); color: var(--stone);
+  }
+
+  .wx-now {
+    display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+    gap: 20px; align-items: center; padding: 22px 0 6px;
+  }
+  .wx-now-main { display: flex; align-items: center; gap: 16px; color: var(--red); }
+  .wx-now-text { color: var(--ink); }
+  .wx-temp { margin: 0; font-size: 3.1rem; font-weight: 800; line-height: 1; letter-spacing: -.02em; }
+  .wx-temp span { font-size: 1.3rem; font-weight: 700; margin-left: 2px; color: var(--stone); }
+  .wx-desc { margin: 6px 0 2px; font-weight: 700; font-size: 1.05rem; }
+  .wx-feels { margin: 0; font-size: .88rem; color: var(--stone); }
+
+  .wx-metrics { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+  .wx-metrics li {
+    background: var(--cream-2, #f8f4ec); border-radius: 10px; padding: 10px 12px;
+    display: flex; flex-direction: column; gap: 2px;
+  }
+  .wx-metrics span { font-size: .76rem; color: var(--stone); }
+  .wx-metrics strong { font-size: .95rem; }
+
+  /* 標籤 */
+  .wx-tabwrap { margin-top: 22px; }
+  .wx-tabs { display: flex; flex-wrap: wrap; gap: 8px; }
+  .wx-tab {
+    font: inherit; font-size: .9rem; font-weight: 700; cursor: pointer;
+    padding: 8px 16px; border-radius: 999px;
+    border: 1px solid var(--line); background: var(--cream-2, #f8f4ec); color: var(--ink-soft);
+  }
+  .wx-tab.is-on { background: var(--red); border-color: var(--red); color: #fff; }
+  .wx-tab__num {
+    display: inline-block; margin-left: 6px; padding: 0 7px; border-radius: 999px;
+    font-size: .74rem; background: rgba(0, 0, 0, .1);
+  }
+  .wx-tab.is-on .wx-tab__num { background: rgba(255, 255, 255, .28); }
+
+  .wx-pane { margin-top: 14px; }
+  .wx-pane__title { margin: 0 0 10px; font-size: .95rem; letter-spacing: .04em; color: var(--stone); font-weight: 800; }
+  .wx-pane__none { margin: 0; font-size: .9rem; color: var(--stone); }
+
+  .is-js .wx-pane { display: none; }
+  .is-js .wx-pane.is-on { display: block; }
+  .is-js .wx-pane + .wx-pane { border-top: 0; }
+  .wx-pane + .wx-pane { border-top: 1px dashed var(--line); padding-top: 16px; }
+
+  .wx-adv-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .wx-adv-list li {
+    padding: 12px 16px; border-radius: 12px;
+    border-left: 4px solid var(--gold); background: #fdf8ef;
+  }
+  .wx-adv-list strong { font-size: .96rem; }
+  .wx-adv-list p { margin: 4px 0 0; font-size: .9rem; line-height: 1.75; color: var(--ink-soft); }
+
+  .wx-pack { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+  .wx-pack li {
+    display: grid; gap: 1px; padding: 9px 14px; border-radius: 10px;
+    background: var(--cream-2, #f8f4ec); border: 1px solid var(--line);
+  }
+  .wx-pack strong { font-size: .9rem; }
+  .wx-pack em { font-style: normal; font-size: .74rem; color: var(--stone); }
+
+  /* 場景 */
+  .wx-block { margin-top: 26px; }
+  .wx-block h4, .wx-air h4 {
+    margin: 0 0 12px; font-size: .95rem; letter-spacing: .04em; color: var(--stone); font-weight: 800;
+  }
+  .wx-scene-lead { margin: -6px 0 14px; font-size: .88rem; color: var(--stone); }
+  .wx-scenes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+  .wx-scene {
+    border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px;
+    background: var(--cream-2, #f8f4ec); border-top: 4px solid #3f8f5f;
+  }
+  .wx-scene.is-ok { border-top-color: #6b8fc4; }
+  .wx-scene.is-caution { border-top-color: var(--gold); }
+  .wx-scene.is-avoid { border-top-color: var(--red); background: #fdf7f6; }
+  .wx-scene header { display: flex; align-items: center; gap: 10px; }
+  .wx-scene__badge {
+    flex: none; width: 34px; height: 34px; display: grid; place-items: center;
+    border-radius: 10px; background: var(--red); color: #fff; font-weight: 800;
+  }
+  .wx-scene header h5 { margin: 0; font-size: 1rem; }
+  .wx-scene__tailo { font-style: normal; font-size: .74rem; color: var(--stone); }
+  .wx-scene__level {
+    margin-left: auto; flex: none; font-size: .76rem; font-weight: 800;
+    padding: 3px 10px; border-radius: 999px; background: #e6f0e8; color: #2f7a4f;
+  }
+  .wx-scene.is-ok .wx-scene__level { background: #e9eff8; color: #48699b; }
+  .wx-scene.is-caution .wx-scene__level { background: #fbf1da; color: #8a6314; }
+  .wx-scene.is-avoid .wx-scene__level { background: #fbe0de; color: var(--red-dark); }
+  .wx-scene__places { margin: 10px 0 0; font-size: .78rem; color: var(--stone); }
+  .wx-scene__text { margin: 8px 0 0; font-size: .9rem; line-height: 1.75; }
+  .wx-scene__tips { margin: 8px 0 0; padding-left: 1.1em; display: grid; gap: 5px; }
+  .wx-scene__tips li { font-size: .84rem; color: var(--ink-soft); line-height: 1.65; }
+
+  /* 逐點鐘 */
+  .wx-hours { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: thin; }
+  .wx-hour {
+    flex: none; width: 62px; display: grid; justify-items: center; gap: 4px;
+    padding: 8px 4px; border-radius: 10px; background: var(--cream-2, #f8f4ec); color: var(--ink);
+  }
+  .wx-hour-time { font-size: .74rem; color: var(--stone); }
+  .wx-hour strong { font-size: .92rem; }
+  .wx-hour .wx-icon { color: var(--red); }
+  .wx-hour-pop { display: grid; justify-items: center; gap: 2px; }
+  .wx-hour-pop i { display: block; width: 4px; border-radius: 999px; background: #6b8fc4; min-height: 3px; }
+  .wx-hour-pop em { font-size: .68rem; color: var(--stone); font-style: normal; }
+
+  .wx-sun { margin: 12px 0 0; font-size: .86rem; color: var(--stone); }
+
+  /* 7 日 */
+  .wx-days { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+  .wx-day {
+    display: grid;
+    grid-template-columns: 86px 30px minmax(0, 1fr) 52px minmax(120px, 1.1fr) 62px;
+    align-items: center; gap: 10px; padding: 10px 8px; border-radius: 10px;
+  }
+  .wx-day + .wx-day { border-top: 1px solid var(--line); }
+  .wx-day-name { font-weight: 700; font-size: .92rem; display: flex; flex-direction: column; }
+  .wx-day-name em { font-style: normal; font-size: .74rem; color: var(--stone); font-weight: 500; }
+  .wx-day .wx-icon { color: var(--red); }
+  .wx-day-desc { font-size: .88rem; color: var(--ink-soft, var(--stone)); }
+  .wx-day-pop { font-size: .84rem; color: #48699b; font-weight: 700; text-align: right; }
+  .wx-day-range { display: grid; grid-template-columns: 34px 1fr 34px; align-items: center; gap: 8px; }
+  .wx-day-range em, .wx-day-range strong { font-size: .84rem; }
+  .wx-day-range em { color: var(--stone); font-style: normal; text-align: right; }
+  .wx-day-range i { display: block; position: relative; height: 4px; border-radius: 999px; background: var(--line); }
+  .wx-day-range b {
+    position: absolute; top: 0; height: 4px; border-radius: 999px;
+    background: linear-gradient(90deg, #7fa8d4, var(--gold) 55%, var(--red));
+  }
+  .wx-day-uv { font-size: .76rem; color: var(--stone); text-align: right; }
+
+  /* 空品 */
+  .wx-air { margin-top: 26px; }
+  .wx-aqi { display: flex; align-items: baseline; gap: 10px; margin: 0; }
+  .wx-aqi strong { font-size: 1.3rem; }
+  .wx-aqi span { font-size: .88rem; font-weight: 700; }
+  .wx-aqi.is-ok span { color: #2f7a4f; }
+  .wx-aqi.is-info span { color: #48699b; }
+  .wx-aqi.is-warn span { color: #b5721f; }
+  .wx-aqi.is-alert span { color: var(--red); }
+  .wx-air-sub { margin: 4px 0 0; font-size: .84rem; color: var(--stone); }
+
+  .wx-tide { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+  .wx-tide li {
+    display: flex; align-items: baseline; gap: 8px; padding: 8px 14px;
+    border-radius: 10px; background: var(--cream-2, #f8f4ec); border: 1px solid var(--line);
+  }
+  .wx-tide li span { font-size: .78rem; color: var(--stone); }
+  .wx-tide li strong { font-size: .95rem; }
+  .wx-tide li.is-high strong { color: #48699b; }
+  .wx-tide li.is-low strong { color: #8a6314; }
+
+  .wx-src {
+    margin: 24px 0 0; padding-top: 14px; border-top: 1px dashed var(--line);
+    font-size: .78rem; color: var(--stone); line-height: 1.7;
+  }
+
+  .wx--compact .wx-now { grid-template-columns: minmax(0, 1fr); }
+
+  @media (max-width: 860px) {
+    .wx-scenes { grid-template-columns: minmax(0, 1fr); }
+  }
+
+  @media (max-width: 760px) {
+    .wx { padding: 18px; }
+    .wx-now { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+    .wx-temp { font-size: 2.6rem; }
+    .wx-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .wx-day {
+      grid-template-columns: 72px 26px minmax(0, 1fr) 46px;
+      grid-template-areas: 'name icon desc pop' 'range range range range';
+      row-gap: 6px;
+    }
+    .wx-day-name { grid-area: name; }
+    .wx-day .wx-icon { grid-area: icon; }
+    .wx-day-desc { grid-area: desc; }
+    .wx-day-pop { grid-area: pop; }
+    .wx-day-range { grid-area: range; }
+    .wx-day-uv { display: none; }
+  }
+</style>

@@ -1,15 +1,30 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import Photo from '../../components/Photo.astro';
-import { templeHighlights } from '../../data/site.js';
+import { site, entity, templeHighlights } from '../../data/site.js';
 
 const jsonld = {
   '@context': 'https://schema.org',
   '@type': 'TouristAttraction',
+  '@id': `${site.url}/#temple`,
   name: '新竹都城隍廟',
-  description: '創建於 1748 年的新竹市定古蹟，主祀城隍爺，是新竹舊城信仰佮廟口小吃的中心。',
-  address: { '@type': 'PostalAddress', streetAddress: '中山路 75 號', addressLocality: '新竹市北區', addressCountry: 'TW' },
+  alternateName: ['Hsinchu City God Temple', 'Sîng-hông-biō'],
+  description: `創建於 1748 年的新竹市定古蹟，主祀城隍爺，是 ${entity.fullName}（${entity.fullNameEn}）佮新竹舊城信仰的中心。`,
+  url: `${site.url}/temple/`,
+  image: [`${site.url}/images/temple-facade.jpg`, `${site.url}/images/temple-arch.jpg`, `${site.url}/images/temple-night.jpg`],
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: entity.streetAddress,
+    addressLocality: `${entity.city}${entity.district}`,
+    addressRegion: entity.stateProvince,
+    postalCode: entity.postalCode,
+    addressCountry: entity.countryCode,
+  },
+  geo: { '@type': 'GeoCoordinates', latitude: entity.latitude, longitude: entity.longitude },
+  hasMap: entity.mapsShareUrl,
   isAccessibleForFree: true,
+  sameAs: [entity.templeOfficialUrl, entity.tourismUrl],
+  containedInPlace: { '@id': `${site.url}/#attraction` },
 };
 ---
 <Layout title="城隍廟參觀指南" description="新竹城隍廟參觀指南：城隍爺是啥人、參拜順序、現場五大看點（三川殿、八卦藻井、龍柱石獅、大鐵算盤、古匾）佮拍照禮儀。" ogImage="/images/temple-facade.jpg" jsonld={jsonld}>

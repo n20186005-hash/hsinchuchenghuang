@@ -1,70 +1,149 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { routes } from '../../data/site.js';
+import { routes, routeGroups, site, entity } from '../../data/site.js';
 
-const jsonld = {
-  '@context': 'https://schema.org',
-  '@type': 'ItemList',
-  name: '新竹城隍廟夜市𨑨迌路線',
-  itemListElement: routes.map((r, i) => ({ '@type': 'ListItem', position: i + 1, name: r.name })),
-};
+// 照 routeGroups（時間／人群／情境）分區塊
+const grouped = routeGroups.map((g) => ({
+  ...g,
+  list: routes.filter((r) => r.group === g.id),
+}));
+
+const jsonld = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: `新竹城隍廟夜市𨑨迌路線（${routes.length} 條）`,
+    itemListElement: routes.map((r, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      item: {
+        '@type': 'TouristTrip',
+        name: r.name,
+        description: r.summary,
+        url: `${site.url}/routes/#${r.slug}`,
+        itinerary: {
+          '@type': 'ItemList',
+          itemListElement: r.steps.map((s, j) => ({
+            '@type': 'ListItem',
+            position: j + 1,
+            name: s,
+          })),
+        },
+      },
+    })),
+  },
+];
 ---
-<Layout title="𨑨迌路線" description="新竹城隍廟夜市𨑨迌路線：一點鐘緊食、兩點鐘經典、兩人分食、落雨天、親子佮舊城半日遊，逐條攏有步驟、時間佮預算。" jsonld={jsonld}>
+<Layout
+  title="𨑨迌路線"
+  description="新竹城隍廟夜市𨑨迌路線：照時間（一點鐘、兩點鐘、半日、全日）、照人群（兩人分食、親子、翕相）、照情境（落雨、低體力無障礙、舊城散步）三款分組，逐條攏有步驟、時間佮預算。"
+  jsonld={jsonld}
+>
   <section class="page-head">
     <div class="wrap">
       <p class="crumbs"><a href="/">頭頁</a> ／ 𨑨迌路線</p>
-      <span class="kicker">看你有偌濟時間</span>
+      <span class="kicker">看你有偌濟時間、幾个人</span>
       <h1>推薦𨑨迌路線</h1>
-      <p class="lede">頭一擺來免家己傷惱，照時間佮人數揀一條，逐條攏有步驟、時間佮預算。</p>
+      <p class="lede">
+        頭一擺來免家己傷惱。{routes.length} 條路線照<strong>時間</strong>、<strong>人群</strong>佮
+        <strong>情境</strong>分成三組，照你的狀況揀一條，逐條攏有步驟、時間佮預算。
+      </p>
     </div>
   </section>
 
+  <!-- 分組索引 -->
   <section class="section-tight">
     <div class="wrap">
-      <div class="tags">
-        {routes.map((r) => <a class="pill" href={`#${r.slug}`}>{r.name}</a>)}
+      <div class="group-tabs">
+        {grouped.map((g) => (
+          <a class="group-tab" href={`#group-${g.id}`}>
+            <strong>{g.name}</strong>
+            <em>{g.list.length} 條</em>
+          </a>
+        ))}
       </div>
     </div>
   </section>
 
-  <section class="section" style="padding-top:6px">
-    <div class="wrap route-list">
-      {routes.map((r) => (
-        <article class="route-block" id={r.slug}>
-          <div class="route-block__head">
-            <div>
-              <h2>{r.name}</h2>
-              <p class="tailo">{r.tailo}</p>
-              <p class="route-summary">{r.summary}</p>
-            </div>
-            <div class="route-facts">
-              <span class="pill pill--red">{r.duration}</span>
-              <span class="pill">{r.budget}</span>
-              <span class="pill">行 {r.walk}</span>
-            </div>
-          </div>
-          <ol class="steps">
-            {r.steps.map((s) => <li>{s}</li>)}
-          </ol>
-        </article>
-      ))}
-    </div>
-  </section>
+  <!-- 逐組路線 -->
+  {grouped.map((g) => (
+    <section class="section group-block" id={`group-${g.id}`}>
+      <div class="wrap">
+        <div class="group-head">
+          <span class="kicker">{g.name}</span>
+          <h2>{g.name}</h2>
+          <p class="lede">{g.desc}</p>
+        </div>
+
+        <div class="tags" style="margin-bottom:24px">
+          {g.list.map((r) => <a class="pill" href={`#${r.slug}`}>{r.name}</a>)}
+        </div>
+
+        <div class="route-list">
+          {g.list.map((r) => (
+            <article class="route-block" id={r.slug}>
+              <div class="route-block__head">
+                <div>
+                  <h3>{r.name}</h3>
+                  <p class="tailo">{r.tailo}</p>
+                  <p class="route-summary">{r.summary}</p>
+                </div>
+                <div class="route-facts">
+                  <span class="pill pill--red">{r.duration}</span>
+                  <span class="pill">{r.budget}</span>
+                  <span class="pill">行 {r.walk}</span>
+                </div>
+              </div>
+              <ol class="steps">
+                {r.steps.map((s) => <li>{s}</li>)}
+              </ol>
+              <p class="route-nav">
+                <a class="btn btn-ghost" href={site.mapsUrl} target="_blank" rel="noopener noreferrer">導航到城隍廟夜市 ↗</a>
+                <a class="route-map-link" href="/map/">配夜市地圖看 →</a>
+              </p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  ))}
 
   <section class="section band-cream">
     <div class="wrap center cta-box">
       <h2>照路線行，配夜市地圖上好用</h2>
-      <p class="lede" style="margin-inline:auto">地圖有標各區位置佮攤位，邊行邊看袂行冤枉路。</p>
+      <p class="lede" style="margin-inline:auto">
+        地圖有標各區位置佮攤位，邊行邊看袂行冤枉路。欲開車來的，先看交通佮停車。
+      </p>
       <div class="hero-cta center-cta">
         <a class="btn btn-primary" href="/map/">看夜市地圖 →</a>
+        <a class="btn btn-ghost" href="/transport/">看交通佮停車 →</a>
         <a class="btn btn-ghost" href="/food/">看必食美食 →</a>
       </div>
+      <p class="cta-note">
+        逐間店家的營業時間佮公休無仝，出發進前請以店家佮官方公告做準。
+      </p>
     </div>
   </section>
 </Layout>
 
 <style>
   .band-cream { background: linear-gradient(180deg, var(--cream-2), var(--cream)); }
+
+  /* 分組索引 */
+  .group-tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .group-tab {
+    display: flex; align-items: baseline; justify-content: space-between; gap: 10px;
+    padding: 16px 20px; border-radius: var(--radius); background: var(--paper);
+    border: 1px solid var(--line); box-shadow: var(--shadow-sm); color: inherit;
+  }
+  .group-tab:hover { border-color: #e0cfae; transform: translateY(-2px); }
+  .group-tab strong { font-size: 1.02rem; color: var(--red-dark); }
+  .group-tab em { font-style: normal; font-size: .82rem; color: var(--stone); font-weight: 700; }
+
+  /* 分組區塊 */
+  .group-block + .group-block { border-top: 1px solid var(--line); }
+  .group-head h2 { margin-bottom: 4px; }
+
   .route-list { display: grid; gap: 22px; }
   .route-block {
     background: var(--paper); border: 1px solid var(--line);
@@ -75,11 +154,19 @@ const jsonld = {
     display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap;
     align-items: flex-start; margin-bottom: 8px;
   }
-  .route-block h2 { margin: 0 0 2px; }
+  .route-block h3 { margin: 0 0 2px; font-size: 1.25rem; }
   .route-block .tailo { margin: 0 0 8px; }
   .route-summary { color: var(--ink-soft); max-width: 40em; margin: 0; }
   .route-facts { display: flex; flex-wrap: wrap; gap: 8px; }
+  .route-nav { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; margin: 18px 0 0; }
+  .route-map-link { font-weight: 700; font-size: .92rem; }
+
   .hero-cta { display: flex; gap: 12px; flex-wrap: wrap; }
   .center-cta { justify-content: center; margin-top: 18px; }
   .cta-box h2 { margin-bottom: 8px; }
+  .cta-note { margin: 18px 0 0; font-size: .86rem; color: var(--stone); }
+
+  @media (max-width: 860px) {
+    .group-tabs { grid-template-columns: 1fr; }
+  }
 </style>

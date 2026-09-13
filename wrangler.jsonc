@@ -1,0 +1,21 @@
+{
+  // 新竹城隍廟夜市指南 — Cloudflare Workers 部署設定
+  // 大部分頁面是靜態資產，由 Workers Static Assets 直接送出；
+  // 天氣佮 API 這款頁面走 Worker 程式（dist/_worker.js）。
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "hsinchuchenghuang",
+  "main": "./dist/_worker.js/index.js",
+  "compatibility_date": "2026-09-13",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "not_found_handling": "404-page"
+  },
+  "observability": {
+    "enabled": true
+  },
+  "placement": {
+    "mode": "smart"
+  }
+}

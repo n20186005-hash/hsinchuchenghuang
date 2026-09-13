@@ -1,0 +1,264 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Photo from '../../components/Photo.astro';
+import { site, entity } from '../../data/site.js';
+import { cityIntro, timeline, legends, architecture, cultureFacts } from '../../data/history.js';
+
+const jsonld = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    '@id': `${site.url}/history/#article`,
+    headline: '竹塹舊城佮新竹城隍廟的來歷：沿革時間軸佮地方傳說',
+    description: '對「竹塹」的地名講起，整理新竹舊城佮新竹都城隍廟（創建 1748 年）的沿革時間軸、地方傳說、建築看點佮文化問答。',
+    inLanguage: 'nan-Hant-TW',
+    url: `${site.url}/history/`,
+    image: [`${site.url}/images/temple-facade.jpg`, `${site.url}/images/east-gate.jpg`, `${site.url}/images/temple-arch.jpg`],
+    about: { '@id': `${site.url}/#attraction` },
+    isPartOf: { '@id': `${site.url}/#website` },
+    author: { '@id': `${site.url}/#organization` },
+    publisher: { '@id': `${site.url}/#organization` },
+    mainEntityOfPage: { '@type': 'WebPage', '@id': `${site.url}/history/` },
+    mentions: [
+      { '@type': 'LandmarkOrHistoricalBuilding', name: '迎曦門（東門城）' },
+      { '@type': 'LandmarkOrHistoricalBuilding', name: '新竹都城隍廟' },
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: cultureFacts.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  },
+];
+---
+<Layout
+  title="竹塹舊城佮城隍廟的來歷"
+  description="竹塹舊城佮新竹城隍廟的歷史來歷：對莿竹圍城的「竹塹」講起，整理沿革時間軸、地方傳說（大鐵算盤、金門保障、九降風佮米粉）、建築看點佮文化問答。"
+  ogImage="/images/temple-facade.jpg"
+  jsonld={jsonld}
+>
+  <section class="page-head">
+    <div class="wrap">
+      <p class="crumbs"><a href="/">頭頁</a> ／ 竹塹舊城佮城隍廟的來歷</p>
+      <span class="kicker">文化佮深度</span>
+      <h1>竹塹舊城佮城隍廟的來歷</h1>
+      <p class="lede">
+        為啥物一个夜市會生佇一座古城的正中央？這頁對「竹塹」的地名講起，
+        整理舊城的沿革、城隍廟的歷史、地方傳說佮建築看點。看煞，你會知影你佇廟口食的彼碗米粉，是食著一个城市的風。
+      </p>
+    </div>
+  </section>
+
+  <!-- 對地名講起 -->
+  <section class="section">
+    <div class="wrap two-col">
+      <div>
+        <span class="kicker">對地名講起</span>
+        <h2>{cityIntro.title}</h2>
+        {cityIntro.paragraphs.map((p) => <p>{p}</p>)}
+      </div>
+      <Photo src="east-gate.jpg" alt="新竹舊城保存落來的東門城（迎曦門）" ratio="4/5" />
+    </div>
+  </section>
+
+  <!-- 沿革時間軸 -->
+  <section class="section band-cream">
+    <div class="wrap">
+      <span class="kicker">沿革時間軸</span>
+      <h2>對莿竹城到廟口市集</h2>
+      <p class="lede">
+        下面的年代是照新竹市政府佮新竹市觀光旅遊網的公開資料整理；
+        若有無仝的版本，會佇條目內底註明「有一說」抑是「口傳」。
+      </p>
+      <ol class="tl">
+        {timeline.map((t) => (
+          <li class="tl__item">
+            <div class="tl__mark">
+              <span class="tl__year">{t.year}</span>
+              <span class="tl__era">{t.era}</span>
+            </div>
+            <div class="tl__body">
+              <h3>{t.title}</h3>
+              <p>{t.text}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- 傳說佮地方口傳 -->
+  <section class="section" id="legends">
+    <div class="wrap">
+      <span class="kicker">傳說佮地方口傳</span>
+      <h2>廟口的故事是按怎講的</h2>
+      <p class="lede">
+        傳說毋是正史，是地方按怎記一个所在的方式。逐條攏有註明來歷，讀趣味，嘛讀人情。
+      </p>
+      <div class="grid grid-2" style="margin-top:26px">
+        {legends.map((l) => (
+          <article class="card legend" id={l.id}>
+            <div class="card__body">
+              <span class="pill pill--gold legend__src">{l.source}</span>
+              <h3 class="card__title">{l.title}</h3>
+              <p class="tailo legend__tailo">{l.tailo}</p>
+              <p class="legend__text">{l.text}</p>
+              <p class="legend__moral"><strong>按怎看：</strong>{l.moral}</p>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 建築佮工藝看點 -->
+  <section class="section band-cream">
+    <div class="wrap">
+      <span class="kicker">現場按怎看</span>
+      <h2>建築佮工藝看點</h2>
+      <p class="lede">入廟毋免趕，一个一个看。遮的物件，是重修的時代一層一層疊起來的。</p>
+      <div class="arch-list">
+        {architecture.map((a, i) => (
+          <article class="arch">
+            <span class="arch__no">{String(i + 1).padStart(2, '0')}</span>
+            <div>
+              <h3 class="arch__name">{a.name}<span class="arch__tailo">{a.tailo}</span></h3>
+              <p>{a.text}</p>
+            </div>
+          </article>
+        ))}
+      </div>
+      <p style="margin-top:24px">
+        <a class="btn btn-ghost" href="/temple/">看城隍廟參觀指南 →</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- 文化問答 -->
+  <section class="section">
+    <div class="wrap">
+      <span class="kicker">加減捌一寡</span>
+      <h2>文化問答</h2>
+      <div class="faq-list">
+        {cultureFacts.map((f) => (
+          <details class="faq">
+            <summary>{f.q}</summary>
+            <div class="faq-a"><p>{f.a}</p></div>
+          </details>
+        ))}
+      </div>
+      <p class="note" style="margin-top:24px">
+        <strong>延伸：</strong>
+        想看訪客設施佮責任，去<a href="/services/">訪客服務佮周邊設施</a>；
+        想看天氣佮四季的遊憩策略，去<a href="/weather/">天氣佮四季策略</a>；
+        想看必食美食，去<a href="/food/">夜市食食</a>。
+      </p>
+    </div>
+  </section>
+
+  <section class="section band-red">
+    <div class="wrap center">
+      <h2 class="light">知影來歷，落來食廟口</h2>
+      <p class="light-lede" style="margin-inline:auto">
+        {entity.fullName}（{entity.fullNameEn}）就踮佇這座舊城的正中央，行路就會到。
+      </p>
+      <div class="center-cta">
+        <a class="btn btn-gold" href="/food/">看必食美食 →</a>
+        <a class="btn btn-ghost btn-ghost-light" href="/routes/">看𨑨迌路線 →</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .band-cream { background: linear-gradient(180deg, var(--cream-2), var(--cream)); }
+  .band-red { background: linear-gradient(160deg, var(--red), var(--red-dark)); color: #fff; }
+  .band-red .light { color: #fff; }
+  .light-lede { color: #f4d9c9; }
+  .two-col { display: grid; grid-template-columns: 1.15fr .85fr; gap: 40px; align-items: start; }
+  .center-cta { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 16px; }
+
+  /* 時間軸 */
+  .tl { list-style: none; margin: 30px 0 0; padding: 0; position: relative; }
+  .tl::before {
+    content: ""; position: absolute; left: 92px; top: 6px; bottom: 6px; width: 2px;
+    background: linear-gradient(180deg, var(--gold), var(--line));
+  }
+  .tl__item { display: grid; grid-template-columns: 92px 1fr; gap: 28px; padding: 0 0 26px; }
+  .tl__item:last-child { padding-bottom: 0; }
+  .tl__mark { text-align: right; padding-top: 2px; position: relative; }
+  .tl__mark::after {
+    content: ""; position: absolute; right: -37px; top: 9px;
+    width: 12px; height: 12px; border-radius: 50%;
+    background: var(--paper); border: 3px solid var(--red); box-sizing: border-box;
+  }
+  .tl__year {
+    display: block; font-size: 1.15rem; font-weight: 800; color: var(--red-dark);
+    font-variant-numeric: tabular-nums;
+  }
+  .tl__era { display: block; font-size: .76rem; color: var(--stone); }
+  .tl__body {
+    background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 18px 22px; box-shadow: var(--shadow-sm);
+  }
+  .tl__body h3 { margin: 0 0 6px; font-size: 1.12rem; color: var(--red-dark); }
+  .tl__body p { margin: 0; color: var(--ink-soft); }
+
+  /* 傳說 */
+  .legend { border-left: 5px solid var(--gold); }
+  .legend__src { align-self: flex-start; margin-bottom: 10px; }
+  .legend__tailo { margin: -4px 0 10px; }
+  .legend__text { color: var(--ink-soft); }
+  .legend__moral {
+    margin: 0; padding-top: 12px; border-top: 1px dashed var(--line);
+    font-size: .94rem; color: var(--ink-soft);
+  }
+  .legend__moral strong { color: var(--red-dark); }
+
+  /* 建築清單 */
+  .arch-list { display: grid; gap: 14px; margin-top: 26px; }
+  .arch {
+    display: grid; grid-template-columns: 56px 1fr; gap: 20px; align-items: start;
+    background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 20px 24px; box-shadow: var(--shadow-sm);
+  }
+  .arch__no {
+    font-size: 1.5rem; font-weight: 800; color: var(--gold);
+    font-variant-numeric: tabular-nums; line-height: 1.2;
+  }
+  .arch__name { margin: 0 0 6px; font-size: 1.1rem; display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px; }
+  .arch__tailo { font-size: .78rem; font-weight: 600; color: var(--stone); font-style: italic; }
+  .arch p { margin: 0; color: var(--ink-soft); }
+
+  /* FAQ */
+  .faq-list { margin-top: 22px; max-width: 860px; }
+  .faq {
+    background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius);
+    margin-bottom: 12px; box-shadow: var(--shadow-sm); overflow: hidden;
+  }
+  .faq summary {
+    cursor: pointer; padding: 18px 22px; font-weight: 800; font-size: 1.03rem;
+    list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 14px;
+  }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after { content: "＋"; color: var(--red); font-size: 1.3rem; flex: none; }
+  .faq[open] summary::after { content: "－"; }
+  .faq[open] summary { color: var(--red-dark); }
+  .faq-a { padding: 0 22px 20px; }
+  .faq-a p { margin: 0; color: var(--ink-soft); }
+
+  @media (max-width: 860px) {
+    .two-col { grid-template-columns: 1fr; gap: 24px; }
+    .tl::before { left: 66px; }
+    .tl__item { grid-template-columns: 66px 1fr; gap: 22px; }
+    .tl__mark::after { right: -29px; }
+  }
+  @media (max-width: 560px) {
+    .arch { grid-template-columns: 1fr; gap: 6px; padding: 18px 20px; }
+    .arch__no { font-size: 1.2rem; }
+  }
+</style>

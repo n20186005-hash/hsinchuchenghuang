@@ -1,0 +1,28 @@
+---
+import { WEATHER_ICONS, WEATHER_ICON_FALLBACK } from '../data/weatherIcons.js';
+
+const { icon = WEATHER_ICON_FALLBACK, size = 28, cls = '' } = Astro.props;
+const body = WEATHER_ICONS[icon] ?? WEATHER_ICONS[WEATHER_ICON_FALLBACK];
+---
+
+<svg
+  class={`wx-icon ${cls}`}
+  width={size}
+  height={size}
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.6"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  aria-hidden="true"
+  focusable="false"
+  set:html={body}
+/>
+
+<style>
+  .wx-icon {
+    display: block;
+    flex: none;
+  }
+</style>

@@ -1,0 +1,3 @@
+# 這幾項是 Worker 程式佮設定檔，毋是靜態資產，莫公開送出
+_worker.js
+_routes.json

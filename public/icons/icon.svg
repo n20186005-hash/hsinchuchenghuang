@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="新竹城隍廟夜市 Chenghuang Temple Night Market">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#a51f1f"/>
+      <stop offset="1" stop-color="#7a1212"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="96" fill="url(#bg)"/>
+  <rect x="42" y="42" width="428" height="428" rx="72" fill="none" stroke="#d4a94e" stroke-width="20"/>
+  <g fill="#fff6e6">
+    <polygon points="256,141 151,223 361,223"/>
+    <polygon points="256,238 118,315 394,315"/>
+    <rect x="192" y="315" width="128" height="50" rx="6"/>
+    <rect x="142" y="365" width="228" height="34" rx="8"/>
+  </g>
+</svg>

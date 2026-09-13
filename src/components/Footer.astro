@@ -1,5 +1,5 @@
 ---
-import { site, nav } from '../data/site.js';
+import { site, footerNav } from '../data/site.js';
 ---
 <footer class="site-footer">
   <div class="wrap foot-grid">
@@ -12,19 +12,19 @@ import { site, nav } from '../data/site.js';
         </div>
       </div>
       <p class="foot-tag">{site.tagline}</p>
+      <div class="foot-info">
+        <h4>基本資料</h4>
+        <p>地址：{site.address}</p>
+        <p>門票：免費</p>
+        <a class="btn btn-gold" href={site.mapsUrl} target="_blank" rel="noopener">開啟外部導航 ↗</a>
+      </div>
     </div>
-    <nav aria-label="頁尾選單">
-      <h4>頁面</h4>
-      {nav.map((i) => <a href={i.href}>{i.label}</a>)}
-      <a href="/faq/">常見問題</a>
-      <a href="/about/">關於本站</a>
-    </nav>
-    <div class="foot-info">
-      <h4>基本資料</h4>
-      <p>地址：{site.address}</p>
-      <p>門票：免費</p>
-      <a class="btn btn-gold" href={site.mapsUrl} target="_blank" rel="noopener">開啟外部導航 ↗</a>
-    </div>
+    {footerNav.map((g) => (
+      <nav aria-label={`頁尾選單：${g.title}`}>
+        <h4>{g.title}</h4>
+        {g.links.map((i) => <a href={i.href}>{i.label}</a>)}
+      </nav>
+    ))}
   </div>
 
   <div class="wrap disclaimer">
@@ -43,7 +43,7 @@ import { site, nav } from '../data/site.js';
 <style>
   .site-footer { background: #24201d; color: #cdc3b6; margin-top: 40px; }
   .foot-grid {
-    display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 34px;
+    display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 34px;
     padding: 52px 20px 30px;
   }
   .foot-brand { display: flex; gap: 12px; align-items: center; margin-bottom: 12px; }
@@ -55,15 +55,17 @@ import { site, nav } from '../data/site.js';
   }
   .foot-brand strong { color: #fff; font-size: 1.1rem; }
   .foot-brand .tailo { margin: 0; font-size: .82rem; }
-  .foot-tag { color: #a99f92; font-size: .95rem; }
+  .foot-tag { color: #a99f92; font-size: .95rem; margin-bottom: 8px; }
   .site-footer h4 { color: #fff; font-size: .92rem; letter-spacing: .1em; margin: 0 0 12px; }
   .site-footer nav a, .foot-info p, .foot-info a { display: block; color: #cdc3b6; padding: 4px 0; font-size: .93rem; }
   .site-footer nav a:hover { color: var(--gold-soft); }
-  .foot-info .btn { margin-top: 12px; color: #fff; }
+  .foot-info { margin-top: 22px; }
+  .foot-info .btn { display: inline-flex; margin-top: 12px; color: #fff; }
   .disclaimer { border-top: 1px solid #3a342e; padding: 22px 20px 40px; }
   .disclaimer p { font-size: .84rem; color: #9a9084; line-height: 1.7; }
   .disclaimer strong { color: #e6ddceff; }
   .disclaimer .review { color: #7f766b; }
   .disclaimer .copy { color: #6f665c; margin: 0; }
-  @media (max-width: 760px) { .foot-grid { grid-template-columns: 1fr; gap: 26px; } }
+  @media (max-width: 900px) { .foot-grid { grid-template-columns: 1fr 1fr; gap: 26px; } }
+  @media (max-width: 560px) { .foot-grid { grid-template-columns: 1fr; } }
 </style>
