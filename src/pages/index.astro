@@ -107,7 +107,10 @@ const faqJsonLd = {
 
 const jsonld = [attractionJsonLd, faqJsonLd];
 ---
-<Layout jsonld={jsonld}>
+<Layout
+  title="新竹城隍廟夜市攻略｜必吃美食、營業時間、交通停車"
+  description="新竹城隍廟夜市完整攻略：廟口必吃美食、夜市地圖、一般營業時間、交通與停車、參拜順序與舊城散步路線，適合第一次到訪的旅客。"
+  jsonld={jsonld}>
   <!-- 1. 首屏 -->
   <section class="hero">
     <img
@@ -125,7 +128,7 @@ const jsonld = [attractionJsonLd, faqJsonLd];
         官方名稱：{entity.fullName}（{entity.fullNameEn}）・{entity.city}{entity.district}
       </p>
       <p class="hero-lede">
-        頭一擺來食啥物、按怎<span class="ruby-w">𨑨迌</span>、車停佗位，一擺共你整理予好勢。<br>
+        第一次來吃什麼、怎麼逛、車停哪裡，一次整理給你。<br>
         <span class="tailo">Sin-tik Sîng-hông-biō — chia̍h-mi̍h、án-ná tshit-thô、thîng-tshia</span>
       </p>
       <p class="hero-rating">
@@ -144,11 +147,11 @@ const jsonld = [attractionJsonLd, faqJsonLd];
         <span class="pill">火車站行路會到</span>
       </div>
       <div class="hero-cta">
-        <a class="btn btn-primary" href="/first-visit/">頭一擺來按怎𨑨迌 →</a>
+        <a class="btn btn-primary" href="/first-visit/">第一次來怎麼逛 →</a>
         <a class="btn btn-ghost btn-ghost-light" href="/map/">看夜市地圖</a>
       </div>
       <p class="hero-sub">
-        抑是先看　<a href="/food/">必食美食</a>　·　<a href="/transport/">交通佮停車</a>
+        或是先看　<a href="/food/">必吃美食</a>　·　<a href="/transport/">交通與停車</a>
       </p>
     </div>
   </section>
@@ -282,9 +285,9 @@ const jsonld = [attractionJsonLd, faqJsonLd];
     <div class="wrap">
       <div class="row-head">
         <div>
-          <span class="kicker">頭一擺必食</span>
-          <h2>第一擺來食啥物？</h2>
-          <p class="lede">先揀食物種類，才免頭一擺就欲揀店揀甲花。</p>
+          <span class="kicker">第一次必吃</span>
+          <h2>第一次來吃什麼？</h2>
+          <p class="lede">先挑食物種類，免得第一次就為了選店選到眼花。</p>
         </div>
         <a class="btn btn-ghost hide-mobile" href="/food/">看全部美食 →</a>
       </div>
@@ -305,7 +308,7 @@ const jsonld = [attractionJsonLd, faqJsonLd];
         ))}
       </div>
       <div class="center" style="margin-top:22px">
-        <a class="btn btn-primary" href="/food/">看全部夜市食食 →</a>
+        <a class="btn btn-primary" href="/food/">看全部夜市美食 →</a>
       </div>
     </div>
   </section>
@@ -331,7 +334,7 @@ const jsonld = [attractionJsonLd, faqJsonLd];
         ))}
       </div>
       <div class="center" style="margin-top:22px">
-        <a class="btn btn-ghost" href="/routes/">看全部𨑨迌路線 →</a>
+        <a class="btn btn-ghost" href="/routes/">看全部遊逛路線 →</a>
       </div>
     </div>
   </section>
@@ -360,9 +363,9 @@ const jsonld = [attractionJsonLd, faqJsonLd];
     <div class="wrap two-col">
       <Photo src="food-stands.jpg" alt="城隍廟周邊的小吃攤位" ratio="5/4" />
       <div>
-        <span class="kicker">兩人來上實用</span>
-        <h2>兩个人按怎點？</h2>
-        <p class="lede">兩人來，逐項攏分做兩份，通食著較濟款味。</p>
+        <span class="kicker">兩人來最實用</span>
+        <h2>兩人怎麼點？</h2>
+        <p class="lede">兩人來，每樣分做兩份，可以吃到比較多款。</p>
         <ul class="steps" style="margin-top:14px">
           <li>一碗米粉摃丸湯先開場，鹹甜芳暖胃。</li>
           <li>一份新竹肉圓，切做兩爿分。</li>
@@ -377,22 +380,22 @@ const jsonld = [attractionJsonLd, faqJsonLd];
   <!-- 7. 交通佮停車 -->
   <section class="section band-cream">
     <div class="wrap">
-      <span class="kicker">按怎去・車停佗位</span>
-      <h2>交通佮停車</h2>
+      <span class="kicker">怎麼去・車停哪裡</span>
+      <h2>交通與停車</h2>
       <div class="grid grid-3" style="margin-top:24px">
         <div class="card"><div class="card__body">
-          <div class="mini-ico">🚉</div><h3 class="card__title">對新竹火車站</h3>
-          <p>適合行路，沿中正路、東門圓環、中山路就入去城隍廟周邊。</p>
-          <a href="/transport/#from-station" class="more">看行路方式 →</a>
+          <div class="mini-ico">🚉</div><h3 class="card__title">從新竹火車站</h3>
+          <p>適合步行，沿中正路、東門圓環、中山路就進入城隍廟周邊。</p>
+          <a href="/transport/#from-station" class="more">看步行方式 →</a>
         </div></div>
         <div class="card"><div class="card__body">
-          <div class="mini-ico">🚄</div><h3 class="card__title">對高鐵新竹站</h3>
-          <p>愛先轉台鐵、公車、接駁抑計程車才入市區。</p>
+          <div class="mini-ico">🚄</div><h3 class="card__title">從高鐵新竹站</h3>
+          <p>要先轉台鐵、公車、接駁或計程車才進市區。</p>
           <a href="/transport/#from-hsr" class="more">看轉乘方式 →</a>
         </div></div>
         <div class="card"><div class="card__body">
-          <div class="mini-ico">🅿️</div><h3 class="card__title">家己開車</h3>
-          <p>莫共車直接駛入廟口的細條巷，先揀外圍停車場才行路較省事。</p>
+          <div class="mini-ico">🅿️</div><h3 class="card__title">自行開車</h3>
+          <p>別把車直接開進廟口窄巷，先停外圍停車場再步行較省事。</p>
           <a href="/transport/#parking" class="more">看停車建議 →</a>
         </div></div>
       </div>

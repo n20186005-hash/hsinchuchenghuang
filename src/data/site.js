@@ -14,12 +14,12 @@ export const site = {
   mapsEmbed: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3621.739240562118!2d120.9656054!3d24.804381000000003!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x346835c010543a25%3A0xc06a66d03f2eecd!2z5Z-O6ZqN5bqZ5aSc5biC!5e0!3m2!1szh-CN!2stw!4v1784622540038!5m2!1szh-CN!2stw',
 };
 
-// 主選單（桌面版主要項目）
+// 主選單（桌面版主要項目）— 以繁體中文為主，台語作為文化補充
 export const nav = [
-  { href: '/first-visit/', label: '頭一擺來' },
-  { href: '/food/', label: '夜市食食' },
+  { href: '/first-visit/', label: '第一次來' },
+  { href: '/food/', label: '必吃美食' },
   { href: '/map/', label: '夜市地圖' },
-  { href: '/routes/', label: '𨑨迌路線' },
+  { href: '/routes/', label: '遊逛路線' },
   { href: '/transport/', label: '交通停車' },
   { href: '/temple/', label: '城隍廟導覽' },
   { href: '/nearby/', label: '附近景點' },
@@ -31,27 +31,27 @@ export const footerNav = [
   {
     title: '出發進前',
     links: [
-      { href: '/first-visit/', label: '頭一擺來按怎𨑨迌' },
-      { href: '/weather/', label: '即時天氣佮四季策略' },
-      { href: '/services/', label: '訪客服務佮周邊設施' },
-      { href: '/transport/', label: '交通佮停車' },
+      { href: '/first-visit/', label: '第一次來怎麼玩' },
+      { href: '/weather/', label: '即時天氣與四季策略' },
+      { href: '/services/', label: '訪客服務與周邊設施' },
+      { href: '/transport/', label: '交通與停車' },
       { href: '/map/', label: '夜市導覽地圖' },
     ],
   },
   {
-    title: '食佮路線',
+    title: '美食與路線',
     links: [
       { href: '/food/', label: '廟口美食總覽' },
-      { href: '/routes/', label: '按時間佮人群揀路線' },
+      { href: '/routes/', label: '依時間與人群選路線' },
       { href: '/nearby/', label: '附近景點' },
     ],
   },
   {
-    title: '文化佮深度',
+    title: '文化與深度',
     links: [
       { href: '/temple/', label: '城隍廟參觀指南' },
-      { href: '/history/', label: '竹塹舊城佮城隍廟的來歷' },
-      { href: '/services/#responsibility', label: '科普佮訪客責任' },
+      { href: '/history/', label: '竹塹舊城與城隍廟的來歷' },
+      { href: '/services/#responsibility', label: '科普與訪客責任' },
       { href: '/faq/', label: '常見問題' },
       { href: '/about/', label: '關於本站' },
     ],
@@ -60,8 +60,8 @@ export const footerNav = [
 
 // 手機底部固定四項
 export const bottomNav = [
-  { href: '/', label: '頭頁', icon: 'home' },
-  { href: '/food/', label: '食食', icon: 'bowl' },
+  { href: '/', label: '首頁', icon: 'home' },
+  { href: '/food/', label: '美食', icon: 'bowl' },
   { href: '/map/', label: '地圖', icon: 'map' },
   { href: '/routes/', label: '路線', icon: 'route' },
 ];
@@ -117,11 +117,111 @@ export const foods = [
   },
 ];
 
+// 附近停車場比較（/transport/ 頁面使用）
+// 說明：以下為城隍廟周邊常見的停車選擇，收費與開放狀況會調整，
+// 實際以現場收費牌與官方公告為準。最後整理：2026 年 10 月。
+// mapUrl 使用 Google 地圖「地點搜尋」連結，避免寫死座標。
+export const parkingLots = [
+  {
+    name: '新竹火車站停車場',
+    area: '台鐵新竹站前',
+    vehicle: '汽車・機車皆可',
+    fee: '公有收費停車場，依現場牌示計時收費；平日與假日費率不同。',
+    walk: '步行約 10～15 分到城隍廟',
+    note: '最穩的選擇，適合搭台鐵來的旅客先停車再步行入市區。',
+    mapUrl: 'https://www.google.com/maps/search/?api=1&query=新竹火車站停車場',
+  },
+  {
+    name: '東門城（迎曦門）周邊公有停車格',
+    area: '東門圓環一帶',
+    vehicle: '汽車・機車',
+    fee: '公有計時停車格，離峰較好停；以現場收費牌為準。',
+    walk: '步行約 5～10 分到城隍廟',
+    note: '順路會經過東門城與護城河，散步進廟口很順。',
+    mapUrl: 'https://www.google.com/maps/search/?api=1&query=東門城+迎曦門+停車',
+  },
+  {
+    name: '中央市場周邊停車場',
+    area: '中央路・中央市場',
+    vehicle: '汽車・機車',
+    fee: '市場周邊公有停車空間，收費依現場牌示。',
+    walk: '步行約 5～8 分到廟埕',
+    note: '買完伴手禮直接上車最方便，假日午後較滿。',
+    mapUrl: 'https://www.google.com/maps/search/?api=1&query=新竹中央市場+停車',
+  },
+  {
+    name: '中山路・中正路路邊收費停車格',
+    area: '廟口周邊街道',
+    vehicle: '汽車・機車',
+    fee: '路邊計時停車格，數量有限，尖峰與假日易滿。',
+    walk: '步行約 2～6 分',
+    note: '離廟口最近，但狹巷會塞，建議早一點到或改停外圍。',
+    mapUrl: 'https://www.google.com/maps/search/?api=1&query=新竹中山路+停車格',
+  },
+  {
+    name: '市區公有立體／地下停車場',
+    area: '新竹市區公務與商場周邊',
+    vehicle: '汽車為主',
+    fee: '公有收費停車場，費率與開放時間依各場站公告。',
+    walk: '步行約 8～12 分',
+    note: '當廟口周邊滿位時，往外圍公有停車場通常較好停。',
+    mapUrl: 'https://www.google.com/maps/search/?api=1&query=新竹市+公有停車場',
+  },
+];
+
+// 廟口代表性店家（/food/ 頁面使用）
+// 說明：以下為城隍廟夜市長期知名的店家類型與代表名號，供旅客按食物挑店。
+// 各店營業時間、價格、公休會變動，出發前請以店家與官方公告為準。最後整理：2026 年 10 月。
+export const shops = [
+  {
+    name: '海瑞摃丸',
+    signature: '貢丸湯・摃丸',
+    type: '湯品',
+    note: '新竹貢丸的代表名號之一，貢丸彈牙、湯頭清爽，常見單點或配米粉。',
+    area: '廟埕周邊',
+  },
+  {
+    name: '城隍廟廟口肉圓',
+    signature: '新竹肉圓',
+    type: '主食',
+    note: '外皮軟 Q、內包瘦肉，淋上甜鹹醬與芥末醬，是廟口必點的經典款。',
+    area: '廟埕小吃區',
+  },
+  {
+    name: '阿城號米粉',
+    signature: '新竹米粉',
+    type: '主食',
+    note: '新竹米粉細而 Q，常與貢丸湯組成「米粉摃丸湯」的招牌組合。',
+    area: '廟埕周邊',
+  },
+  {
+    name: '城隍廟潤餅',
+    signature: '潤餅',
+    type: '小食',
+    note: '餅皮包蔬菜與配料，清爽不膩，適合當作鹹食小點分食。',
+    area: '廟埕小吃區',
+  },
+  {
+    name: '廟口番薯粥',
+    signature: '番薯粥・小菜',
+    type: '主食',
+    note: '清粥配小菜，便宜實在，適合晚上吃輕一點或宵夜。',
+    area: '廟埕周邊',
+  },
+  {
+    name: '新竹鴨肉飯',
+    signature: '鴨肉飯・鴨湯',
+    type: '主食',
+    note: '鴨肉切片鋪在飯上，淋鴨汁，配鴨湯去油解膩。',
+    area: '廟埕周邊',
+  },
+];
+
 // 路線分組（/routes/ 頁面照 group 分區塊顯示）
 export const routeGroups = [
-  { id: 'time', name: '按時間揀', desc: '看你有偌濟時間：一點鐘、兩點鐘、半日抑是全日。' },
-  { id: 'people', name: '按人群揀', desc: '看你是家己來、兩個人、𤆬囡仔抑是𤆬序大人。' },
-  { id: 'condition', name: '按情境揀', desc: '落雨天、想欲翕相、抑是行路較無方便。' },
+  { id: 'time', name: '按時間挑', desc: '看你有幾時間：一小時、兩小時、半日或是全日。' },
+  { id: 'people', name: '按人群挑', desc: '看你是自己來、兩個人、帶小孩或是帶長輩。' },
+  { id: 'condition', name: '按情境挑', desc: '下雨天、想拍照、或是走路比較不方便。' },
 ];
 
 // 路線

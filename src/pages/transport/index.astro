@@ -1,14 +1,14 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { site } from '../../data/site.js';
+import { site, parkingLots } from '../../data/site.js';
 ---
-<Layout title="交通佮停車" description="到新竹城隍廟夜市的交通佮停車攻略：對新竹火車站行路、對高鐵新竹站轉乘、開車停車佮機車停車建議，以路線原則加外部導航呈現。">
+<Layout title="新竹城隍廟停車場推薦｜附近停車與交通攻略" description="新竹城隍廟怎麼去、車停哪裡：從新竹火車站步行、高鐵新竹站轉乘、開車與機車停車建議，並整理廟口周邊停車場的收費、步行距離與導航，以路線原則加外部即時導航呈現。">
   <section class="page-head">
     <div class="wrap">
-      <p class="crumbs"><a href="/">頭頁</a> ／ 交通停車</p>
-      <span class="kicker">按怎去・車停佗位</span>
-      <h1>交通佮停車</h1>
-      <p class="lede">本站以「路線原則 ＋ 外部即時導航」呈現，無共公車班次寫死。實際時刻請以官方為準。</p>
+      <p class="crumbs"><a href="/">首頁</a> ／ 交通與停車</p>
+      <span class="kicker">怎麼去・車停哪裡</span>
+      <h1>新竹城隍廟交通與停車攻略</h1>
+      <p class="lede">網站以「路線原則 ＋ 外部即時導航」呈現，不公車班次寫死。實際時刻與車況請以官方與現場為準。</p>
     </div>
   </section>
 
@@ -27,37 +27,38 @@ import { site } from '../../data/site.js';
       <article class="trans-block" id="from-station">
         <div class="t-ico">🚉</div>
         <div>
-          <h2>對新竹火車站</h2>
-          <p class="lede">上簡單，直接行路。</p>
-          <p>對台鐵新竹站前站出來，沿<strong>中正路</strong>直直行，到<strong>東門圓環（東門城）</strong>，閣越入<strong>中山路</strong>就到城隍廟。全程約 <strong>10～15 分鐘</strong>，路平好行，途中就有東門城通看。</p>
+          <h2>從新竹火車站</h2>
+          <p class="lede">最簡單，直接步行。</p>
+          <p>從台鐵新竹站前站出來，沿<strong>中正路</strong>直直走，到<strong>東門圓環（東門城）</strong>，再轉入<strong>中山路</strong>就到城隍廟。全程約 <strong>10～15 分鐘</strong>，路平好走，途中就會經過東門城。</p>
         </div>
       </article>
 
       <article class="trans-block" id="from-hsr">
         <div class="t-ico">🚄</div>
         <div>
-          <h2>對高鐵新竹站</h2>
-          <p class="lede">高鐵站佇竹北六家，愛先入市區。</p>
-          <p>高鐵新竹站無直接到城隍廟。通揀：轉<strong>台鐵六家線</strong>到新竹站，抑坐<strong>公車／接駁</strong>到市區，抑直接<strong>計程車</strong>（較緊，車錢較貴）。轉台鐵是上省的方式。</p>
+          <h2>從高鐵新竹站</h2>
+          <p class="lede">高鐵站位在竹北六家，要先進市區。</p>
+          <p>高鐵新竹站不直接到城隍廟。可選：轉<strong>台鐵六家線</strong>到新竹站，或搭<strong>公車／接駁</strong>進市區，也可直接<strong>計程車</strong>（較快、車資較高）。轉台鐵是最省的方式。</p>
         </div>
       </article>
 
       <article class="trans-block" id="by-bus">
         <div class="t-ico">🚌</div>
         <div>
-          <h2>坐公車</h2>
+          <h2>搭乘公車</h2>
           <p class="lede">市區公車有到東門圓環一帶。</p>
-          <p>到「城隍廟／東門圓環」附近的市區公車路線會使調整，出發進前請查<strong>新竹市公車</strong>抑地圖 App 的即時班次，本站無共班次寫死。</p>
+          <p>到「城隍廟／東門圓環」附近的市區公車路線可能調整，出發前請查<strong>新竹市公車</strong>或地圖 App 的即時班次，網站不公車班次寫死。</p>
         </div>
       </article>
 
       <article class="trans-block" id="parking">
         <div class="t-ico">🅿️</div>
         <div>
-          <h2>家己開車・停車</h2>
-          <p class="lede">莫共車直接駛入廟口細巷。</p>
-          <p>城隍廟周邊街仔路狹閣人濟，<strong>先揀外圍停車場才行路</strong>通常較省事。放假時中山路、東門街一帶較會塞，會使揀車站抑東門城附近的收費停車場，行路 5～10 分入夜市。</p>
-          <div class="note" id="holiday-tips" style="margin-top:12px"><strong>放假提醒：</strong>假日中晝到下晡上濟人，車位歹揣，早寡來抑坐大眾運輸較袂等。</div>
+          <h2>自行開車・停車</h2>
+          <p class="lede">別把車直接開進廟口窄巷。</p>
+          <p>城隍廟周邊街道狹窄又人多，<strong>先停外圍停車場再步行</strong>通常較省事。假日中山路、東門街一帶容易塞車，可停在火車站或東門城附近的收費停車場，步行 5～10 分進夜市。</p>
+          <div class="note" id="holiday-tips" style="margin-top:12px"><strong>假日提醒：</strong>假日中午到下半天人最多，車位難找，早一點到或改搭大眾運輸較不用等。</div>
+          <p style="margin-top:12px"><a href="#parking-lots" class="more">看廟口周邊停車場比較 →</a></p>
         </div>
       </article>
 
@@ -65,17 +66,48 @@ import { site } from '../../data/site.js';
         <div class="t-ico">🛵</div>
         <div>
           <h2>騎機車</h2>
-          <p class="lede">機車較好䲟，猶是愛停格內。</p>
-          <p>周邊有機車停車格，比汽車好䲟。莫烏白停佇廟埕口抑紅線，較袂食單。</p>
+          <p class="lede">機車比較好停，仍要停在格內。</p>
+          <p>周邊有機車停車格，比汽車好停。別隨便停在廟埕口或紅線，才不會被開單。</p>
         </div>
       </article>
     </div>
   </section>
 
+  <!-- 停車場比較（P0：具體停車場資料） -->
+  <section class="section band-cream" id="parking-lots">
+    <div class="wrap">
+      <span class="kicker">車停哪裡最方便</span>
+      <h2>廟口周邊停車場比較</h2>
+      <p class="lede">
+        城隍廟夜市本身沒有專屬大型停車場，以下整理廟口周邊常見的停車選擇，給自駕與機車旅客參考。
+        收費、開放狀況與車位會變動，<strong>實際以現場收費牌與官方公告為準</strong>。
+      </p>
+      <div class="parking-grid">
+        {parkingLots.map((p) => (
+          <article class="parking-card">
+            <h3 class="parking-card__name">{p.name}</h3>
+            <p class="parking-card__area">{p.area}</p>
+            <dl class="parking-spec">
+              <div><dt>車種</dt><dd>{p.vehicle}</dd></div>
+              <div><dt>收費</dt><dd>{p.fee}</dd></div>
+              <div><dt>步行</dt><dd>{p.walk}</dd></div>
+            </dl>
+            <p class="parking-card__note">{p.note}</p>
+            <a class="btn btn-ghost parking-card__map" href={p.mapUrl} target="_blank" rel="noopener noreferrer">導航到停車場 ↗</a>
+          </article>
+        ))}
+      </div>
+      <p class="note" style="margin-top:20px">
+        <strong>最後整理：</strong>2026 年 10 月。停車場名稱、費率與是否營運都可能調整，出發前請以現場與官方公告做準；
+        也可以直接用手機地圖搜尋「新竹城隍廟 停車」找到離你最近的即時選項。
+      </p>
+    </div>
+  </section>
+
   <section class="section band-cream">
     <div class="wrap center">
-      <h2>行到現場，開導航上準</h2>
-      <p class="lede" style="margin-inline:auto">實際路況、停車場狀態會變，請以外部即時導航做準。</p>
+      <h2>到現場，開導航最準</h2>
+      <p class="lede" style="margin-inline:auto">實際路況、停車場狀態會變，請以外部即時導航為準。</p>
       <a class="btn btn-primary" href={site.mapsUrl} target="_blank" rel="noopener" style="margin-top:14px">開啟外部導航 ↗</a>
     </div>
   </section>
@@ -97,4 +129,18 @@ import { site } from '../../data/site.js';
     display: grid; place-items: center; font-size: 1.9rem;
   }
   @media (max-width: 620px) { .trans-block { grid-template-columns: 1fr; } .t-ico { width: 56px; height: 56px; } }
+
+  .parking-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-top: 22px; }
+  .parking-card {
+    background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-lg);
+    padding: 20px 22px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 10px;
+  }
+  .parking-card__name { margin: 0; font-size: 1.18rem; color: var(--ink); }
+  .parking-card__area { margin: 0; color: var(--stone); font-size: 0.9rem; }
+  .parking-spec { margin: 0; display: grid; gap: 8px; }
+  .parking-spec > div { display: grid; grid-template-columns: 56px 1fr; gap: 10px; align-items: baseline; }
+  .parking-spec dt { color: var(--stone); font-weight: 600; font-size: 0.88rem; }
+  .parking-spec dd { margin: 0; font-size: 0.92rem; line-height: 1.5; }
+  .parking-card__note { margin: 0; font-size: 0.9rem; color: var(--stone); line-height: 1.5; }
+  .parking-card__map { margin-top: auto; align-self: flex-start; }
 </style>

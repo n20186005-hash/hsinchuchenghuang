@@ -1,14 +1,14 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { foods } from '../../data/site.js';
+import { foods, shops } from '../../data/site.js';
 
 const scenes = [
-  { label: '頭一擺必食', href: '/routes/#two-hours' },
-  { label: '一个人按怎食', href: '/routes/#one-hour' },
-  { label: '兩个人分食', href: '/routes/#two-person-food-walk' },
-  { label: '𤆬囡仔', href: '/routes/#family' },
+  { label: '第一次必吃', href: '/routes/#two-hours' },
+  { label: '一個人怎麼吃', href: '/routes/#one-hour' },
+  { label: '兩人分食', href: '/routes/#two-person-food-walk' },
+  { label: '帶小孩', href: '/routes/#family' },
   { label: '適合外帶', href: '#takeaway' },
-  { label: '甜點佮等路', href: '#souvenirs' },
+  { label: '甜點與伴手', href: '#souvenirs' },
 ];
 
 const jsonld = {
@@ -20,13 +20,13 @@ const jsonld = {
   })),
 };
 ---
-<Layout title="夜市食食總覽" description="新竹城隍廟夜市代表美食：米粉摃丸湯、新竹肉圓、肉燥飯、蚵仔煎、羹湯佮竹塹餅等路，附口味說明、價數區間佮分食建議。" ogImage="/images/food-gongwan.jpg" jsonld={jsonld}>
+<Layout title="新竹城隍廟美食推薦｜廟口小吃與必吃攻略" description="新竹城隍廟夜市代表美食：米粉摃丸湯、新竹肉圓、肉燥飯、蚵仔煎、羹湯與竹塹餅等，附口味說明、價格區間與分食建議，並整理廟口必吃店家與購買攻略。" ogImage="/images/food-gongwan.jpg" jsonld={jsonld}>
   <section class="page-head">
     <div class="wrap">
-      <p class="crumbs"><a href="/">頭頁</a> ／ 夜市食食</p>
-      <span class="kicker">廟口必食</span>
-      <h1>夜市食食總覽</h1>
-      <p class="lede">先揀食物種類，才免頭一擺就欲揀甲花。逐項攏有口味說明、價數區間佮分食建議。</p>
+      <p class="crumbs"><a href="/">首頁</a> ／ 廟口美食</p>
+      <span class="kicker">廟口必吃</span>
+      <h1>新竹城隍廟必吃美食</h1>
+      <p class="lede">先挑食物種類，免得第一次就為了選店選到眼花。每項都有口味說明、價格區間與分食建議。</p>
     </div>
   </section>
 
@@ -60,27 +60,56 @@ const jsonld = {
     </div>
   </section>
 
+  <!-- 廟口代表性店家（P1：具體店家內容） -->
+  <section class="section" id="shops">
+    <div class="wrap">
+      <span class="kicker">廟口代表性店家</span>
+      <h2>新竹城隍廟必吃店家</h2>
+      <p class="lede">
+        以下為城隍廟夜市長期知名的代表性店家，供旅客按食物類型挑店。
+        各店營業時間、價格、公休會變動，出發前請以店家與官方公告為準。
+      </p>
+      <div class="shop-grid">
+        {shops.map((s) => (
+          <article class="shop-card">
+            <div class="shop-card__head">
+              <h3 class="shop-card__name">{s.name}</h3>
+              <span class="pill pill--red">{s.type}</span>
+            </div>
+            <p class="shop-card__sig"><strong>招牌：</strong>{s.signature}</p>
+            <p class="shop-card__area">位置：{s.area}</p>
+            <p class="shop-card__note">{s.note}</p>
+          </article>
+        ))}
+      </div>
+      <p class="note" style="margin-top:20px">
+        <strong>最後整理：</strong>2026 年 10 月。店家名號、招牌菜、營業時間與公休都可能調整，本表僅供挑店參考，實際請以現場與店家公告為準；
+        也可直接用手機地圖搜尋「新竹城隍廟 美食」找到最新店家與評價。
+      </p>
+    </div>
+  </section>
+
   <section class="section band-cream" id="order-tips">
     <div class="wrap">
-      <span class="kicker">頭一擺點餐</span>
-      <h2>點餐愛注意的</h2>
+      <span class="kicker">第一次點餐</span>
+      <h2>點餐要注意的</h2>
       <div class="grid grid-3" style="margin-top:22px">
         <div class="card"><div class="card__body">
           <h3 class="card__title">先看時間</h3>
-          <p>逐間營業佮公休無仝。<strong>一般營業時間依店家公開資訊整理</strong>，節日、臨時歇睏抑賣了會使調整，出發進前請看店家最新公告。</p>
+          <p>每間店家的營業與公休不盡相同。<strong>一般營業時間依店家公開資訊整理</strong>，節日、臨時休息或售完都可能調整，出發前請看店家最新公告。</p>
         </div></div>
         <div class="card"><div class="card__body">
           <h3 class="card__title">現金較穩</h3>
-          <p>廟口老店真濟猶原收現金為主，身軀邊紮寡零星較袂卡。</p>
+          <p>廟口老店很多仍以現金為主，身上備點零錢比較不會卡關。</p>
         </div></div>
         <div class="card"><div class="card__body">
-          <h3 class="card__title" id="takeaway">會使外帶</h3>
-          <p>湯類、肉圓、竹塹餅攏通外帶。人濟坐無位的時，外帶去廟埕邊仔食嘛好。</p>
+          <h3 class="card__title" id="takeaway">可以外帶</h3>
+          <p>湯類、肉圓、竹塹餅都能外帶。人多的時候坐不到位，外帶到廟埕邊吃也很好。</p>
         </div></div>
       </div>
       <div class="note" style="margin-top:20px">
-        本站無提供「營業中／已打烊／等候幾分鐘／今仔日賣了」這款即時狀態。
-        時間、價數會使變動，請以店家現場佮官方公告做準。
+        本站不提供「營業中／已打烊／等候幾分鐘／今天賣完」這類即時狀態。
+        時間、價格可能變動，請以店家現場與官方公告為準。
       </div>
     </div>
   </section>
@@ -89,11 +118,11 @@ const jsonld = {
     <div class="wrap">
       <div class="row-head">
         <div>
-          <span class="kicker">買轉去分</span>
-          <h2>甜點佮等路（伴手禮）</h2>
-          <p class="lede">燒麻糬、水蒸糕食現的；竹塹餅、肉餅通買轉去做等路。</p>
+          <span class="kicker">買回去分</span>
+          <h2>甜點與伴手禮</h2>
+          <p class="lede">現做燒麻糬、水蒸糕趁熱吃；竹塹餅、肉餅可買回去做伴手。</p>
         </div>
-        <a class="btn btn-primary" href="/map/">佇地圖揣店家 →</a>
+        <a class="btn btn-primary" href="/map/">在地圖找店家 →</a>
       </div>
     </div>
   </section>
@@ -121,4 +150,15 @@ const jsonld = {
     .food-item img { min-height: 200px; aspect-ratio: 16/10; }
     .food-item__body { padding: 4px 22px 24px; }
   }
+
+  .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; margin-top: 22px; }
+  .shop-card {
+    background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-lg);
+    padding: 20px 22px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 10px;
+  }
+  .shop-card__head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .shop-card__name { margin: 0; font-size: 1.15rem; color: var(--ink); }
+  .shop-card__sig { margin: 0; font-size: .95rem; }
+  .shop-card__area { margin: 0; font-size: .9rem; color: var(--stone); }
+  .shop-card__note { margin: 0; font-size: .9rem; color: var(--ink-soft); line-height: 1.5; }
 </style>

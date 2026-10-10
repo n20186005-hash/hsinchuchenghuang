@@ -1,0 +1,16 @@
+# 全站安全與傳輸層標頭（Cloudflare Workers 靜態資產支援 _headers）
+#
+# 注意：本檔案只管「回應標頭」。網域層級的重新導向（http→https、www→apex）
+# 無法用 _redirects 處理（Workers 靜態資產不支援主機層級重新導向），
+# 請到 Cloudflare 控制台設定：
+#   1) SSL/TLS → Edge Certificates → 開啟「Always Use HTTPS」（http→https）
+#   2) Rules → Redirect Rules（或 Bulk Redirects）將
+#      https://www.hsinchuchenghuang.com/* → https://hsinchuchenghuang.com/*  （301）
+# 本站的規範網址（canonical）為非 www 的 https 版本，請將所有變體導向它。
+
+/*
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), camera=(), microphone=(), payment=()

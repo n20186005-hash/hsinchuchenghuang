@@ -7,20 +7,20 @@ const legend = [
   { ico: '🍜', label: '主食' },
   { ico: '🍢', label: '小食' },
   { ico: '🍡', label: '甜點' },
-  { ico: '🎁', label: '等路' },
+  { ico: '🎁', label: '伴手' },
   { ico: '🏯', label: '寺廟' },
   { ico: 'P', label: '停車', cls: 'p' },
   { ico: 'WC', label: '便所', cls: 'wc' },
   { ico: '📷', label: '景點' },
 ];
 ---
-<Layout title="夜市導覽地圖" description="新竹城隍廟夜市原創 SVG 導覽地圖，涵蓋都城隍廟、廟埕小吃區、中山路、東門街、西安街、中央市場佮東門城方向，附外部導航連結。" ogImage="/images/temple-arch.jpg">
+<Layout title="新竹城隍廟夜市地圖｜美食位置與步行導航" description="新竹城隍廟夜市原創 SVG 導覽地圖，涵蓋都城隍廟、廟埕小吃區、中山路、東門街、西安街、中央市場與東門城方向，附外部導航連結。" ogImage="/images/temple-arch.jpg">
   <section class="page-head">
     <div class="wrap">
-      <p class="crumbs"><a href="/">頭頁</a> ／ 夜市地圖</p>
-      <span class="kicker">全站上愛的功能</span>
-      <h1>夜市導覽地圖</h1>
-      <p class="lede">原創手繪示意地圖，共城隍廟、廟埕小吃區佮周邊街仔路畫予你看。這毋是精準比例圖，實際行路請配外部導航。</p>
+      <p class="crumbs"><a href="/">首頁</a> ／ 夜市地圖</p>
+      <span class="kicker">全站最好用的功能</span>
+      <h1>新竹城隍廟夜市地圖</h1>
+      <p class="lede">原創手繪示意地圖，把城隍廟、廟埕小吃區與周邊街道畫給你看。這不是精準比例圖，實際走路請搭配外部導航。</p>
     </div>
   </section>
 
@@ -141,8 +141,8 @@ const legend = [
   <section class="section-tight">
     <div class="wrap">
       <span class="kicker">真實地圖</span>
-      <h2>佇 Google 地圖看城隍廟夜市</h2>
-      <p class="lede">頂懸是示意圖，下跤是實際位置。會使直接放大、看街景抑點導航。</p>
+      <h2>在 Google 地圖看城隍廟夜市</h2>
+      <p class="lede">上面是示意圖，下面是實際位置。可以直接放大、看街景或點導航。</p>
       <div class="gmap-frame">
         <iframe
           src={site.mapsEmbed}
@@ -171,13 +171,13 @@ const legend = [
   <!-- 地圖下方四條固定路線 -->
   <section class="section band-cream">
     <div class="wrap">
-      <span class="kicker">照圖行</span>
+      <span class="kicker">照圖走</span>
       <h2>四條好用路線</h2>
       <div class="grid grid-4" style="margin-top:22px">
-        <a class="card mini-route" href="/routes/#two-hours"><div class="card__body"><h3 class="card__title">頭一擺必食</h3><p>拜拜 → 廟埕主食 → 小食 → 甜點</p></div></a>
-        <a class="card mini-route" href="/routes/#two-person-food-walk"><div class="card__body"><h3 class="card__title">兩人分食</h3><p>逐項分兩份，食著較濟款</p></div></a>
-        <a class="card mini-route" href="/routes/#rainy-day"><div class="card__body"><h3 class="card__title">落雨少行路</h3><p>儘量佇廟埕佮市場內底</p></div></a>
-        <a class="card mini-route" href="/routes/#old-town-walk"><div class="card__body"><h3 class="card__title">食了散步</h3><p>接東門城、北門街舊城𨑨迌</p></div></a>
+        <a class="card mini-route" href="/routes/#two-hours"><div class="card__body"><h3 class="card__title">第一次必吃</h3><p>拜拜 → 廟埕主食 → 小食 → 甜點</p></div></a>
+        <a class="card mini-route" href="/routes/#two-person-food-walk"><div class="card__body"><h3 class="card__title">兩人分食</h3><p>每樣分兩份，吃得到比較多款</p></div></a>
+        <a class="card mini-route" href="/routes/#rainy-day"><div class="card__body"><h3 class="card__title">下雨少走路</h3><p>儘量在廟埕與市場內</p></div></a>
+        <a class="card mini-route" href="/routes/#old-town-walk"><div class="card__body"><h3 class="card__title">吃完好散步</h3><p>接東門城、北門街舊城散步</p></div></a>
       </div>
     </div>
   </section>
